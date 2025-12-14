@@ -127,7 +127,7 @@ const AiChat: React.FC = () => {
     <div className={s.chatWrapper}>
       {/* Sidebar */}
       <div className={s.sidebar}>
-        <h2>💬 Чаты</h2>
+        <h2>Чаты</h2>
 
         <button onClick={newChat} className={s.newChat}>
           + Новый чат

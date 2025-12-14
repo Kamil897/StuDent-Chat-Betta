@@ -1,43 +1,56 @@
 import s from './NewsHero.module.scss';
 import NewsText from '../NewsText/NewsText';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const projectNews = [
+/* ===== TYPES ===== */
+interface NewsItem {
+  id: string;
+  category: string;
+  img: string;
+  content: string;
+}
+
+/* ===== DATA ===== */
+const projectNews: NewsItem[] = [
   {
     id: 'tech1',
     category: 'news.tech',
     img: '/openday.jpg',
-    content: 'news.techText1'
+    content: 'news.techText1',
   },
   {
     id: 'culture',
     category: 'news.culture',
     img: '/agile.jpg',
-    content: 'news.cultureText'
+    content: 'news.cultureText',
   },
   {
     id: 'tech2',
     category: 'news.tech',
     img: '/openday.jpg',
-    content: 'news.techText2'
-  }
+    content: 'news.techText2',
+  },
 ];
 
-const generalNews = [
+const generalNews: NewsItem[] = [
   {
     id: 'society',
     category: 'news.society',
     img: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/BBC_World_News_2022_%28Boxed%29.svg',
-    content: 'news.societyText'
-  }
+    content: 'news.societyText',
+  },
 ];
 
-const NewsHero = () => {
+/* ===== COMPONENT ===== */
+const NewsHero: React.FC = () => {
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredProjectNews, setFilteredProjectNews] = useState(projectNews);
-  const [filteredGeneralNews, setFilteredGeneralNews] = useState(generalNews);
+
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [filteredProjectNews, setFilteredProjectNews] =
+    useState<NewsItem[]>(projectNews);
+  const [filteredGeneralNews, setFilteredGeneralNews] =
+    useState<NewsItem[]>(generalNews);
 
   useEffect(() => {
     if (!searchTerm.trim()) {
@@ -65,7 +78,7 @@ const NewsHero = () => {
     );
   }, [searchTerm, t]);
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
@@ -89,10 +102,10 @@ const NewsHero = () => {
               border: '2px solid #ddd',
               borderRadius: '25px',
               outline: 'none',
-              transition: 'border-color 0.3s ease'
+              transition: 'border-color 0.3s ease',
             }}
-            onFocus={(e) => (e.target.style.borderColor = '#007bff')}
-            onBlur={(e) => (e.target.style.borderColor = '#ddd')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#007bff')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = '#ddd')}
           />
           {searchTerm && (
             <button
@@ -106,13 +119,14 @@ const NewsHero = () => {
                 border: 'none',
                 fontSize: '18px',
                 cursor: 'pointer',
-                color: '#999'
+                color: '#999',
               }}
             >
               ×
             </button>
           )}
         </div>
+
         {searchTerm && (
           <div style={{ textAlign: 'center', marginTop: '10px', color: '#666' }}>
             {t('news.searchResults')}: "<strong>{searchTerm}</strong>"
@@ -123,6 +137,7 @@ const NewsHero = () => {
       <div className={`${s.h1} ${s.project}`}>
         <h1 className={s.Text}>{t('news.project')}</h1>
       </div>
+
       {filteredProjectNews.map(({ id, category, img, content }) => (
         <div key={id}>
           <div className={s.h1}>
@@ -137,6 +152,7 @@ const NewsHero = () => {
       <div className={`${s.h1} ${s.general}`}>
         <h1 className={s.Text}>{t('news.other')}</h1>
       </div>
+
       {filteredGeneralNews.map(({ id, category, img, content }) => (
         <div key={id}>
           <div className={s.h1}>
