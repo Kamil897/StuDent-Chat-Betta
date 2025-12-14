@@ -1,0 +1,234 @@
+$primary-500: #3b82f6;
+$primary-600: #2563eb;
+$accent-light: #dff7ff;
+$input-grad-start: #e6e6ff;
+$input-grad-end: #d7f6ff;
+$page-bg-start: #fdfdfd;
+$page-bg-end: #f7fbff;
+$card-bg: #ffffff;
+$muted: #6b7280;
+$success: #16a34a;
+$warning: #ca8a04;
+$error: #dc2626;
+$radius: 18px;
+$transition: all 0.18s ease;
+
+.container {
+  min-height: 100vh;
+  padding: 28px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, $page-bg-start, $page-bg-end);
+  color: #0f172a;
+}
+
+/* Title */
+.title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+}
+
+/* Switcher (top buttons) */
+.switcher {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 18px 0 8px;
+}
+
+.button {
+  padding: 8px 16px;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: $transition;
+  background: linear-gradient(180deg, #ffffff, #f6fbff);
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(16,24,40,0.04);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(16,24,40,0.06);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* Active / inactive modifiers */
+.buttonActive {
+  background: linear-gradient(90deg, $primary-500, $primary-600);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 8px 22px rgba(59,130,246,0.18);
+}
+
+.buttonInactive {
+  background: transparent !important;
+  color: $muted !important;
+  border: 1px solid rgba(15,23,42,0.04);
+}
+
+/* Generic card */
+.card {
+  background: $card-bg;
+  border-radius: $radius;
+  padding: 18px;
+  border: 1px solid rgba(14, 21, 45, 0.04);
+  box-shadow: 0 6px 20px rgba(16,24,40,0.03);
+  transition: $transition;
+  margin-bottom: 12px;
+}
+
+/* Result card (slightly different spacing) */
+.resultCard {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: $radius;
+}
+
+/* Textarea (writing) */
+.textarea {
+  width: 100%;
+  min-height: 200px;
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 15px;
+  resize: vertical;
+  background: linear-gradient(135deg, $input-grad-start, $input-grad-end);
+  border: none;
+  outline: none;
+  box-shadow: inset 0 2px 12px rgba(16,24,40,0.03);
+  color: inherit;
+  margin-top: 12px;
+
+  &::placeholder {
+    color: #6b7280;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.08);
+  }
+}
+
+/* Actions row for buttons */
+.actionsRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Table / rows / cells used in Results */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-bottom: 8px;
+
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: $muted;
+    border-bottom: 1px solid rgba(15,23,42,0.04);
+  }
+
+  td {
+    border-bottom: 1px solid rgba(15,23,42,0.03);
+    color: #0f172a;
+  }
+}
+
+
+
+.tableCell {
+  // generic cell block used also outside tables
+  padding: 8px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Input grid for reading answers */
+.inputGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* small inputs inside grid */
+.input {
+  height: 44px;
+  border-radius: 12px;
+  padding: 6px 8px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid rgba(15,23,42,0.06);
+  background: linear-gradient(180deg, #fff, #fbfeff);
+  box-shadow: inset 0 2px 6px rgba(16,24,40,0.02);
+  transition: $transition;
+  outline: none;
+
+  &:focus {
+    border-color: $primary-500;
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.06);
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+/* Scores */
+.scoreHigh {
+  color: $success;
+  font-weight: 700;
+}
+
+.scoreMid {
+  color: $warning;
+  font-weight: 700;
+}
+
+.scoreLow {
+  color: $error;
+  font-weight: 700;
+}
+
+/* Titles inside cards (h2/h3 reused) */
+.title {
+  // ensure smaller titles inside cards look good
+  &.small {
+    font-size: 16px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+}
+
+/* Utility: center empty state */
+.emptyState {
+  padding: 32px;
+  text-align: center;
+  color: $muted;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .inputGrid {
+    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  }
+
+  .title {
+    font-size: 22px;
+  }
+}

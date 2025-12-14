@@ -1,0 +1,89 @@
+.footer {
+  background-color: rgba(137, 229, 252, 0.29);
+  stroke-width: 1px;
+  stroke: #fff;
+  padding-top: 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 15px auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  .logo {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 0.5rem;
+  }
+
+  .logoText {
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+}
+
+.center {
+  justify-self: center;
+  text-align: center;
+  padding: 12px 10px;
+  border-radius: 8px;
+  min-width: 220px;
+  max-width: 520px;
+}
+
+.quote {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: #4c4c4c;
+  line-height: 1.3;
+  letter-spacing: 0.2px;
+  text-wrap: balance;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  flex-direction: column;
+}
+
+.nav a {
+  color: #4c4c4c;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.nav a:hover {
+  color: #38bdf8; 
+  transform: translateY(-2px);
+}
+
+
+.bottom {
+  border-top: 1px solid White;
+  margin-top: 2rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 15px;
+  color: #4c4c4c;
+}
+
+.bottom span {
+  margin-top: 8px;
+}
