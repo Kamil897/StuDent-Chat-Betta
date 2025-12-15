@@ -9,6 +9,14 @@ import AiChat from './Components/Cognia/AiChat'
 import AISimulation from './Components/Trai/AISimulation'
 // import NewsHero from './Components/NewsHero/NewsHero'
 import Profile from "./pages/Profile/Profile";
+import Don from './Components/Don/Don'
+import PongNeon from './Components/PingPong/PingPong'
+import Games from './pages/GamePage/Games'
+import Minesweeper from './Components/MineSwiper/MineSwiper'
+import Shop from './pages/Shop/Shop'
+import AdminPanel from './pages/Admin/Admin'
+import Doom from './Components/Asteroids/Asteroids'
+import PrivilageCard from './Components/PrivilageCard/PrivilageCard'
 
 function App() {
   return (
@@ -22,6 +30,14 @@ function App() {
         <Route path='/AISimulation' element={<AISimulation/>}/>
         {/* <Route path='/NewsHero' element={<NewsHero/>}/> */}
         <Route path="/profile" element={<Profile />} />
+        <Route path='/games' element={<Games/>}/>
+        <Route path='/games/meteors' element={<Doom/>}/>
+        <Route path='/games/Don'element={<Don/>}/>
+        <Route path='/games/pingpong' element={<PongNeon/>}/>
+        <Route path='/games/minesweeper' element={<Minesweeper/>}/>
+        <Route path='/Shop' element={<Shop/>}/>
+        <Route path='/shop/admin' element={<AdminPanel/>}/>
+        <Route path='/PrivilageCard' element={<PrivilageCard title={''} description={''} limit={''} price={0}/>}/>
       </Routes>
       <Footer />
     </BrowserRouter>
