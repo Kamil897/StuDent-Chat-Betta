@@ -104,6 +104,12 @@
   opacity: 0.87;
 }
 
+.error {
+  color: red;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
 
 @media (max-width: 768px) {
   .wrapper {

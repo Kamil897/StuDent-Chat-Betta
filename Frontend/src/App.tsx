@@ -7,6 +7,8 @@ import Header from './Components/Header/Header'
 import Footer from './Components/Footer/Footer'
 import AiChat from './Components/Cognia/AiChat'
 import AISimulation from './Components/Trai/AISimulation'
+// import NewsHero from './Components/NewsHero/NewsHero'
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path='/register' element={<Register/>}/>
         <Route path='/AiChat' element={<AiChat/>}/>
         <Route path='/AISimulation' element={<AISimulation/>}/>
+        {/* <Route path='/NewsHero' element={<NewsHero/>}/> */}
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       <Footer />
     </BrowserRouter>

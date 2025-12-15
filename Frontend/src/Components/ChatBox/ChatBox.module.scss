@@ -1,0 +1,271 @@
+.chatContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .chatHeader {
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+  
+    .friendInfo {
+      display: flex;
+      align-items: center;
+    }
+  
+    .friendAvatar {
+      margin-right: 15px;
+  
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+  
+      .avatarPlaceholder {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #4CAF50;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+    }
+  
+    .friendDetails {
+      .friendName {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0 0 5px 0;
+        color: #333;
+      }
+  
+      .friendStatus {
+        font-size: 0.9rem;
+        color: #4CAF50;
+        margin: 0;
+      }
+    }
+  }
+  
+  .messagesContainer {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: #f5f5f5;
+  
+    .emptyChat {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #666;
+      font-size: 1.1rem;
+    }
+  }
+  
+  .messagesList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .dateSeparator {
+    text-align: center;
+    margin: 20px 0;
+    color: #999;
+    font-size: 0.9rem;
+    position: relative;
+  
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #ddd;
+      z-index: 1;
+    }
+  
+    span {
+      background: #f5f5f5;
+      padding: 0 15px;
+      position: relative;
+      z-index: 2;
+    }
+  }
+  
+  .message {
+    display: flex;
+    margin-bottom: 10px;
+  
+    &.own {
+      justify-content: flex-end;
+  
+      .messageContent {
+        background: #4CAF50;
+        color: white;
+        border-radius: 18px 18px 4px 18px;
+      }
+    }
+  
+    &.other {
+      justify-content: flex-start;
+  
+      .messageContent {
+        background: white;
+        color: #333;
+        border-radius: 18px 18px 18px 4px;
+        border: 1px solid #e0e0e0;
+      }
+    }
+  }
+  
+  .messageContent {
+    max-width: 70%;
+    padding: 12px 16px;
+    position: relative;
+  
+    .messageText {
+      margin: 0 0 5px 0;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+  
+    .messageTime {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      display: block;
+    }
+  }
+  
+  .messageInput {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  
+    .messageTextarea {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      resize: none;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.4;
+      max-height: 100px;
+      min-height: 40px;
+  
+      &:focus {
+        outline: none;
+        border-color: #4CAF50;
+      }
+  
+      &::placeholder {
+        color: #999;
+      }
+    }
+  
+    .sendButton {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+  
+      &:hover:not(:disabled) {
+        background: #45a049;
+        transform: scale(1.05);
+      }
+  
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+  
+  .loading,
+  .error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  .error {
+    color: #f44336;
+  }
+  
+  @media (max-width: 768px) {
+    .chatContainer {
+      height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  
+    .chatHeader {
+      padding: 15px;
+  
+      .friendAvatar {
+        img,
+        .avatarPlaceholder {
+          width: 40px;
+          height: 40px;
+          font-size: 1rem;
+        }
+      }
+  
+      .friendName {
+        font-size: 1.1rem;
+      }
+    }
+  
+    .messagesContainer {
+      padding: 15px;
+    }
+  
+    .messageInput {
+      padding: 15px;
+  
+      .messageTextarea {
+        padding: 10px;
+      }
+  
+      .sendButton {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+      }
+    }
+  
+    .messageContent {
+      max-width: 85%;
+      padding: 10px 14px;
+    }
+  }
