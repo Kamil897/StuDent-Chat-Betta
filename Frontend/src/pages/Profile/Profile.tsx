@@ -64,17 +64,17 @@ export default function Profile() {
         {/* Правая панель */}
         <div className={S.menuCard}>
           <ul className={S.menu}>
-            <li>Leaderboard</li>
+            <li><a href="/Leaderboard">Leaderboard</a></li>
           </ul>
 
           <span className={S.line}></span>
 
           <ul className={S.menu}>
-            <li>Магазин</li>
-            <li>Игры</li>
-            <li>Кошелёк</li>
-            <li>Достижения</li>
-            <li>Друзья</li>
+            <li><a href="/Shop">Магазин</a></li>
+            <li><a href="/games">Игры</a></li>
+            <li><a href="/Wallet">Кошелёк</a></li>
+            <li><a href="/">Достижения</a></li>
+            <li><a href="/Chat">Друзья и чаты</a></li>
           </ul>
 
           <span className={S.line}></span>

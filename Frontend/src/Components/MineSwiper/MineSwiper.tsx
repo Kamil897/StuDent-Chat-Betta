@@ -169,6 +169,9 @@ const revealCell = useCallback((board: Cell[][], row: number, col: number): Cell
 
     if (allNonMinesRevealed) {
       setGameStatus('won');
+      // Award points for win
+      const { handleGameWin } = require("../../utils/gameRewards");
+      handleGameWin("Minesweeper");
       setIsTimerRunning(false);
     }
   };

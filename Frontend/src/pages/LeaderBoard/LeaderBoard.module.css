@@ -1,0 +1,237 @@
+.leaderboard {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    max-width: 1000px;
+    margin: 50px auto;
+    font-family: "Inter", sans-serif;
+    color: #1a1a1a;
+    min-height: 60vh;
+  }
+  
+  /* ---------- Header ---------- */
+  
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .tab {
+    background: #f5f7fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .tab:hover {
+    background: #eaf2ff;
+  }
+  
+  .tab.isActive {
+    background: #eaf2ff;
+    border-color: #a3c8ff;
+    color: #2563eb;
+    font-weight: 500;
+  }
+  
+  .gameSelector {
+    margin-top: 8px;
+  }
+  
+  .gameSelect {
+    background: #f2fbff;
+    border: 1px solid #d5f2ff;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .gameSelect:hover {
+    border-color: #80d8ff;
+  }
+  
+  /* ---------- Table ---------- */
+  
+  .table {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .row {
+    display: grid;
+    grid-template-columns: 60px 1fr 120px 120px;
+    align-items: center;
+    padding: 10px 16px;
+    font-size: 15px;
+    border-bottom: 1px solid #f1f3f5;
+    transition: background 0.2s ease;
+  }
+  
+  .row:hover {
+    background: #f9fafb;
+  }
+  
+  .row.head {
+    background: #f8fafc;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  /* ---------- Shop row ---------- */
+  
+  .row_shop {
+    display: grid;
+    grid-template-columns: 60px 1fr 120px 120px 60px;
+    align-items: center;
+    padding: 10px 16px;
+    font-size: 15px;
+    border-bottom: 1px solid #f1f3f5;
+    transition: background 0.2s ease;
+  }
+  
+  .row_shop:hover {
+    background: #f9fafb;
+  }
+  
+  .row_shop.head {
+    background: #f8fafc;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  /* ---------- Cells ---------- */
+  
+  .cell {
+    display: flex;
+    align-items: center;
+  }
+  
+  .playerCell {
+    display: flex;
+    align-items: center;
+  }
+  
+  .player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .playerInfo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  
+  .playerName {
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .playerTag {
+    font-size: 12px;
+    color: #94a3b8;
+  }
+  
+  .points {
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .emptyState {
+    text-align: center;
+    padding: 24px;
+    color: #9ca3af;
+    font-size: 14px;
+  }
+  
+  /* ---------- Footer ---------- */
+  
+  .footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .pageBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    color: #374151;
+    transition: all 0.2s ease;
+  }
+  
+  .pageBtn:hover:not(:disabled) {
+    background: #f1f5f9;
+  }
+  
+  .pageBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  .pageBtn.isActive {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+  }
+  
+  /* ---------- Loading ---------- */
+  
+  .loading {
+    text-align: center;
+    padding: 24px;
+    font-size: 15px;
+    color: #64748b;
+  }
+  

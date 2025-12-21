@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { checkIELTSEssay } from "../../utils/openai";
 
 /** --------- TYPES --------- */
 type WritingTask = {
@@ -85,7 +86,7 @@ function mockScoreWriting(text: string) {
   return { overall: band, words };
 }
 
-/** Fake AI check with simple heuristics */
+/** Fake AI check with simple heuristics (fallback) */
 function mockAICheckWriting(text: string) {
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   const band = Math.min(9, Math.max(1, Math.floor(words / 25) + 1));
@@ -308,14 +309,23 @@ export default function AISimulation(): JSX.Element {
   }
 
   async function onAICheckWriting() {
-    if (!essay.trim()) return;
+    if (!essay.trim() || !writingTask) return;
     try {
       setLoading(true);
-      const res = mockAICheckWriting(essay);
+      
+      // Use real OpenAI Assistant API
+      const res = await checkIELTSEssay(essay, writingTask.type, writingTask.prompt);
       setWritingAIResult(res);
       // do not stop timer
     } catch (e) {
       console.error("onAICheckWriting error", e);
+      // Fallback to mock if API fails
+      const fallbackRes = mockAICheckWriting(essay);
+      setWritingAIResult({
+        ...fallbackRes,
+        error: true,
+        errorMessage: e instanceof Error ? e.message : "Failed to check with AI",
+      });
     } finally {
       setLoading(false);
     }

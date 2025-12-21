@@ -33,6 +33,38 @@
   padding: 30px 20px;
 }
 
+.progressWrapper {
+  width: 100%;
+}
+
+.progressText {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #6366f1);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.progressPercent {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+}
+
 .date {
   font-size: 14px;
   color: #666;

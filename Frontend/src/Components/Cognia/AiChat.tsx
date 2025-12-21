@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Bot, User } from "lucide-react";
 import s from "./AiChat.module.scss";
+import { createThread, sendMessageToAssistant, ASSISTANT_IDS } from "../../utils/openai";
 
 type Chat = {
   id: number;
   title: string;
+  threadId?: string; // OpenAI thread ID
 };
 
 type Message = {
@@ -37,15 +39,16 @@ const AiChat: React.FC = () => {
     setSelectedChat(chatId);
     const saved = JSON.parse(localStorage.getItem(`chat_${chatId}`) || "[]");
     setMessages(saved);
+    // Thread ID is already saved in chatList, no need to load separately
   };
 
   // Создать чат
-  const newChat = () => {
+  const newChat = async (initialMessage?: string) => {
     const id = Date.now();
 
     const newChatObj: Chat = {
       id,
-      title: `Chat ${chatList.length + 1}`,
+      title: initialMessage ? initialMessage.substring(0, 30) : `Chat ${chatList.length + 1}`,
     };
 
     const updated = [...chatList, newChatObj];
@@ -55,6 +58,44 @@ const AiChat: React.FC = () => {
     setSelectedChat(id);
     setMessages([]);
     localStorage.setItem(`chat_${id}`, "[]");
+
+    // Create thread for new chat
+    let threadId: string | undefined;
+    try {
+      threadId = await createThread();
+      saveThreadId(id, threadId);
+    } catch (error) {
+      console.error("Error creating thread for new chat:", error);
+      // Thread will be created when first message is sent
+    }
+
+    // If there's an initial message, send it immediately
+    if (initialMessage && threadId) {
+      const userMsg: Message = { role: "user", text: initialMessage };
+      setMessages([userMsg]);
+      saveMessages(id, [userMsg]);
+      setMessage("");
+
+      setIsLoading(true);
+      try {
+        const reply = await sendMessageToAssistant(threadId, ASSISTANT_IDS.COGNIA, initialMessage);
+        const aiMsg: Message = { role: "ai", text: reply };
+        const finalMessages = [userMsg, aiMsg];
+        setMessages(finalMessages);
+        saveMessages(id, finalMessages);
+      } catch (error) {
+        console.error("Error sending initial message:", error);
+        const errorMsg: Message = {
+          role: "ai",
+          text: `Ошибка: ${error instanceof Error ? error.message : "Не удалось получить ответ от AI"}`,
+        };
+        const finalMessages = [userMsg, errorMsg];
+        setMessages(finalMessages);
+        saveMessages(id, finalMessages);
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   // Удалить чат
@@ -78,20 +119,29 @@ const AiChat: React.FC = () => {
     localStorage.setItem(`chat_${chatId}`, JSON.stringify(msgs));
   };
 
-  // "AI"-ответ (фейковый)
-  const fakeAIReply = async (_userMsg: string): Promise<string> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const replies = [
-          "Интересно, расскажи подробнее!",
-          "Хмм, звучит неплохо.",
-          "Хороший вопрос 👌",
-          "Согласен.",
-          "Продолжай.",
-        ];
-        resolve(replies[Math.floor(Math.random() * replies.length)]);
-      }, 800);
+  // Сохранить thread ID для чата
+  const saveThreadId = (chatId: number, threadId: string) => {
+    setChatList((prevChatList) => {
+      const updated = prevChatList.map((chat) =>
+        chat.id === chatId ? { ...chat, threadId } : chat
+      );
+      localStorage.setItem("chatList", JSON.stringify(updated));
+      return updated;
     });
+  };
+
+  // Получить thread ID для чата или создать новый
+  const getOrCreateThread = async (chatId: number): Promise<string> => {
+    // Check current chatList state
+    const currentChat = chatList.find((c) => c.id === chatId);
+    if (currentChat?.threadId) {
+      return currentChat.threadId;
+    }
+
+    // Create new thread
+    const threadId = await createThread();
+    saveThreadId(chatId, threadId);
+    return threadId;
   };
 
   const sendMessage = async () => {
@@ -106,14 +156,34 @@ const AiChat: React.FC = () => {
 
     setIsLoading(true);
 
-    const reply = await fakeAIReply(message);
-    const aiMsg: Message = { role: "ai", text: reply };
+    try {
+      // Get or create thread for this chat
+      const threadId = await getOrCreateThread(selectedChat);
 
-    const updated = [...newMessages, aiMsg];
-    setMessages(updated);
-    saveMessages(selectedChat, updated);
+      // Send message to OpenAI Assistant
+      const reply = await sendMessageToAssistant(
+        threadId,
+        ASSISTANT_IDS.COGNIA,
+        message
+      );
 
-    setIsLoading(false);
+      const aiMsg: Message = { role: "ai", text: reply };
+
+      const updated = [...newMessages, aiMsg];
+      setMessages(updated);
+      saveMessages(selectedChat, updated);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      const errorMsg: Message = {
+        role: "ai",
+        text: `Ошибка: ${error instanceof Error ? error.message : "Не удалось получить ответ от AI"}`,
+      };
+      const updated = [...newMessages, errorMsg];
+      setMessages(updated);
+      saveMessages(selectedChat, updated);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -129,7 +199,7 @@ const AiChat: React.FC = () => {
       <div className={s.sidebar}>
         <h2>Чаты</h2>
 
-        <button onClick={newChat} className={s.newChat}>
+        <button onClick={() => newChat()} className={s.newChat}>
           + Новый чат
         </button>
 
@@ -161,10 +231,22 @@ const AiChat: React.FC = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e: any) => {
-                if (e.key === "Enter") newChat();
+                if (e.key === "Enter" && message.trim() && !isLoading) {
+                  e.preventDefault();
+                  newChat(message);
+                }
               }}
             />
-            <button className={s.welcomeButton} disabled={!message.trim()}>
+            <button
+              className={s.welcomeButton}
+              disabled={!message.trim() || isLoading}
+              onClick={(e) => {
+                e.preventDefault();
+                if (message.trim()) {
+                  newChat(message);
+                }
+              }}
+            >
               ➤
             </button>
           </div>

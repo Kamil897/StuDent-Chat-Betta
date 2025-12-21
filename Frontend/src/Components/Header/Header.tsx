@@ -4,16 +4,46 @@ import { IoLanguageOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { getPoints } from "../../utils/points";
 
 export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const [points, setPoints] = useState(0);
   const bellRef = useRef<HTMLDivElement>(null);
 
   // Проверяем авторизацию при каждом рендере
   useEffect(() => {
     const auth = localStorage.getItem("isAuth") === "true";
     setIsAuth(auth);
+    setPoints(getPoints());
+  }, []);
+
+  // Update points when they change
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setPoints(getPoints());
+    };
+
+    const handleGameWin = () => {
+      setPoints(getPoints());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("game-win" as any, handleGameWin);
+    window.addEventListener("achievement-unlocked" as any, handleGameWin);
+
+    // Also check periodically for same-tab updates
+    const interval = setInterval(() => {
+      setPoints(getPoints());
+    }, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("game-win" as any, handleGameWin);
+      window.removeEventListener("achievement-unlocked" as any, handleGameWin);
+      clearInterval(interval);
+    };
   }, []);
 
   // Закрытие уведомлений при клике вне
@@ -40,11 +70,18 @@ export default function Header() {
       <nav className={S.nav}>
         <Link to="/">STUDENT CHAT</Link>
         <Link to="/AiChat">Cognia Ai</Link>
-        <Link to="/AISimulation">IELTS simulation</Link>
+        <Link to="/AISimulation">Trai</Link>
         <Link to="/News">News</Link>
       </nav>
 
       <div className={S.right}>
+        {isAuth && (
+          <Link to="/Wallet" className={S.pointsDisplay}>
+            <span className={S.pointsIcon}>⭐️</span>
+            <span className={S.pointsAmount}>{points}</span>
+          </Link>
+        )}
+
         <IoLanguageOutline className={S.icon} />
 
         <div className={S.bellWrapper} ref={bellRef}>
@@ -73,3 +110,4 @@ export default function Header() {
     </header>
   );
 }
+

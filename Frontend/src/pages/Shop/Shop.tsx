@@ -76,6 +76,7 @@ const Shop: React.FC = () => {
             {filters.map((filter) => (
               <button
                 key={filter}
+                className={activeFilter === filter ? styles.activeFilter : ''}
                 onClick={() => setActiveFilter(filter)}
               >
                 {filter}
@@ -108,3 +109,4 @@ const Shop: React.FC = () => {
 };
 
 export default Shop;
+

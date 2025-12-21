@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './asteroid.module.css';
 import { useNavigate } from 'react-router-dom';
+import { handleGameWin } from '../../utils/gameRewards';
 
 /* ===== TYPES ===== */
 type Ship = {
@@ -220,7 +221,17 @@ const Doom: React.FC = () => {
           if (Math.hypot(b.x - a.x, b.y - a.y) < a.size) {
             bulletsRef.current.splice(bi, 1);
             asteroidsRef.current.splice(ai, 1);
-            setGameState(prev => ({ ...prev, score: prev.score + 10 }));
+            const newScore = gameState.score + 10;
+            setGameState(prev => ({ ...prev, score: newScore }));
+            
+            // Check if all asteroids are destroyed (win condition)
+            if (asteroidsRef.current.length === 1) { // Last asteroid being destroyed
+              setTimeout(() => {
+                if (asteroidsRef.current.length === 0) {
+                  handleGameWin("Asteroids");
+                }
+              }, 100);
+            }
           }
         });
       });

@@ -41,12 +41,26 @@ const Games: React.FC = () => {
         </div>
       </header>
 
+
       <div className={styles.dateSection}>
-        <p className={styles.date}>
-          {('games.greeting')}: 2025/05/2025
-        </p>
         <p className={styles.greeting}>Hello</p>
+
+        <div className={styles.progressWrapper}>
+          <div className={styles.progressText}>
+            Прогресс: 39010 / 100000
+          </div>
+
+          <div className={styles.progressBar}>
+            <div
+              className={styles.progressFill}
+              style={{ width: "39%" }}
+            />
+          </div>
+
+          <div className={styles.progressPercent}>39.0%</div>
+        </div>
       </div>
+
 
       <nav className={styles.categories}>
         {categories.map((category) => (
@@ -73,23 +87,6 @@ const Games: React.FC = () => {
           </div>
         ))}
       </div>
-
-      <footer className={styles.footer}>
-        <div className={styles.footerContent}>
-          <h2 className={styles.footerTitle}>
-            Learn. Communicate. Develop.
-          </h2>
-          <div className={styles.footerLinks}>
-            <a href="#" className={styles.footerLink}>Group</a>
-            <a href="#" className={styles.footerLink}>Code A</a>
-            <a href="#" className={styles.footerLink}>My Course</a>
-            <a href="#" className={styles.footerLink}>Battle</a>
-          </div>
-          <p className={styles.copyright}>
-            ©️ 2023-2025 RAZNATOV{('games.rights')}
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };

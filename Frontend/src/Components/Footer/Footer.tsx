@@ -12,9 +12,9 @@ const Footer = () => {
           </blockquote>
         </div>
         <nav className={s.nav}>
-          <Link to="#">IELTS симулятор</Link>
-          <Link to="#">Cognia AI</Link>
-          <Link to="#">Мой аккаунт</Link>
+          <Link to="/AISimulation">IELTS симулятор</Link>
+          <Link to="/AiChat">Cognia AI</Link>
+          <Link to="/profile">Мой аккаунт</Link>
         </nav>
       </div>
       <div className={s.bottom}>

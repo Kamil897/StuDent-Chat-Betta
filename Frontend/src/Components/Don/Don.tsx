@@ -67,6 +67,12 @@ const Don: React.FC = () => {
 
     setGameState((prev) => {
       const newWins = gameResult === "win" ? prev.wins + 1 : prev.wins;
+      
+      // Award points for win
+      if (gameResult === "win") {
+        const { handleGameWin } = require("../../utils/gameRewards");
+        handleGameWin("TicTacToe");
+      }
       const newTies = gameResult === "tie" ? prev.ties + 1 : prev.ties;
       const newLosses = gameResult === "lose" ? prev.losses + 1 : prev.losses;
 

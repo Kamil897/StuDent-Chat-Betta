@@ -17,6 +17,10 @@ import Shop from './pages/Shop/Shop'
 import AdminPanel from './pages/Admin/Admin'
 import Doom from './Components/Asteroids/Asteroids'
 import PrivilageCard from './Components/PrivilageCard/PrivilageCard'
+import ChatComponent from './Components/ChatBox/Chat'
+import Leaderboard from './pages/LeaderBoard/LeaderBoard'
+import Wallet from './pages/Wallet/Wallet'
+import PointsNotification from './Components/PointsNotification/PointsNotification'
 
 function App() {
   return (
@@ -38,10 +42,16 @@ function App() {
         <Route path='/Shop' element={<Shop/>}/>
         <Route path='/shop/admin' element={<AdminPanel/>}/>
         <Route path='/PrivilageCard' element={<PrivilageCard title={''} description={''} limit={''} price={0}/>}/>
+        <Route path='/Chat' element={<ChatComponent/>}/>
+        <Route path='/Leaderboard' element={<Leaderboard/>}/>
+        <Route path='/Friends' element={<ChatComponent/>}/>
+        <Route path='/Wallet' element={<Wallet/>}/>
       </Routes>
+      <PointsNotification />
       <Footer />
     </BrowserRouter>
   )
 }
 
 export default App
+

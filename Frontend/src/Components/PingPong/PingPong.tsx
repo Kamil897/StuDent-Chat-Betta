@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "./Ping.module.css";
-// import { useUser } from "../../Context/UserContext";
 import { useNavigate } from 'react-router-dom';
-// import { useTranslation } from 'react-i18next';
+
 
 interface GameState {
   ballX: number;
@@ -90,6 +89,11 @@ const PongNeon: React.FC = () => {
     const resetBall = () => {
       if (state.playerScore >= winningScore || state.aiScore >= winningScore) {
         setIsRunning(false);
+        // Award points if player won
+        if (state.playerScore >= winningScore) {
+          const { handleGameWin } = require("../../utils/gameRewards");
+          handleGameWin("Ping Pong");
+        }
         state.playerScore = 0;
         state.aiScore = 0;
         return;
