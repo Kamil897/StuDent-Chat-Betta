@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "./Ping.module.css";
 import { useNavigate } from 'react-router-dom';
+import { handleGameWin } from '../../utils/gameRewards';
 
 
 interface GameState {
@@ -25,7 +26,6 @@ const PongNeon: React.FC = () => {
   const previousTimeRef = useRef<number | undefined>(undefined);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [score, setScore] = useState<number>(0);
   // const { addPoints } = useUser();
   const navigate = useNavigate();
   // const { t } = useTranslation();
@@ -91,7 +91,6 @@ const PongNeon: React.FC = () => {
         setIsRunning(false);
         // Award points if player won
         if (state.playerScore >= winningScore) {
-          const { handleGameWin } = require("../../utils/gameRewards");
           handleGameWin("Ping Pong");
         }
         state.playerScore = 0;

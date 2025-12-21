@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import s from "./DonDon.module.css";
 import { useNavigate } from 'react-router-dom';
+import { handleGameWin } from '../../utils/gameRewards';
 
 
 interface Choice {
@@ -39,7 +40,6 @@ const getResult = (playerChoice: string, computerChoice: string): GameResult => 
 
 const Don: React.FC = () => {
 
-  const [rpsWins, setRpsWins] = useState<number>(0);
   const navigate = useNavigate();
 
 
@@ -56,11 +56,6 @@ const Don: React.FC = () => {
     localStorage.setItem('rpsWins', gameState.wins.toString());
   }, [gameState.wins]);
 
-  useEffect(() => {
-    const savedWins = parseInt(localStorage.getItem('rpsWins') || '0', 10) || 0;
-    setRpsWins(savedWins);
-  }, []);
-
   const handlePlayerChoice = (choice: Choice) => {
     const randomChoice = choices[Math.floor(Math.random() * choices.length)];
     const gameResult = getResult(choice.name, randomChoice.name);
@@ -70,7 +65,6 @@ const Don: React.FC = () => {
       
       // Award points for win
       if (gameResult === "win") {
-        const { handleGameWin } = require("../../utils/gameRewards");
         handleGameWin("TicTacToe");
       }
       const newTies = gameResult === "tie" ? prev.ties + 1 : prev.ties;

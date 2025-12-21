@@ -70,7 +70,18 @@ const AiChat: React.FC = () => {
     }
 
     // If there's an initial message, send it immediately
-    if (initialMessage && threadId) {
+    if (initialMessage) {
+      if (!threadId) {
+        // Try to create thread again if it wasn't created
+        try {
+          threadId = await createThread();
+          saveThreadId(id, threadId);
+        } catch (error) {
+          console.error("Error creating thread for initial message:", error);
+          return;
+        }
+      }
+      
       const userMsg: Message = { role: "user", text: initialMessage };
       setMessages([userMsg]);
       saveMessages(id, [userMsg]);

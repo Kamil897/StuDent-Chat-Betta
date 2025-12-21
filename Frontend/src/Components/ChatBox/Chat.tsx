@@ -514,17 +514,13 @@ const ChatComponent: React.FC = () => {
                   friendRequests.map((request) => (
                     <div key={request.id} className={styles.friendItem}>
                       <div className={styles.friendAvatar}>
-                        {request.user.avatar ? (
-                          <img src={request.user.avatar} alt={request.user.name} />
-                        ) : (
-                          <div className={styles.avatarPlaceholder}>
-                            {request.user.name[0].toUpperCase()}
-                          </div>
-                        )}
+                        <div className={styles.avatarPlaceholder}>
+                          {request.fromUserName[0].toUpperCase()}
+                        </div>
                       </div>
                       <div className={styles.friendInfo}>
-                        <div className={styles.friendName}>{request.user.name}</div>
-                        <div className={styles.friendEmail}>{request.user.email}</div>
+                        <div className={styles.friendName}>{request.fromUserName}</div>
+                        <div className={styles.friendEmail}>{request.fromUserId}</div>
                       </div>
                       <div className={styles.friendActions}>
                         <button
@@ -635,7 +631,7 @@ const ChatComponent: React.FC = () => {
                             </div>
                           ) : (
                             <div className={styles.messageText}>
-                              {message.text.split(" ").map((word, i) => {
+                              {message.text.split(" ").map((word: string, i: number) => {
                                 if (word.startsWith("@")) {
                                   return (
                                     <span key={i} className={styles.mention}>
@@ -656,18 +652,21 @@ const ChatComponent: React.FC = () => {
                             </span>
                             {message.reactions && Object.keys(message.reactions).length > 0 && (
                               <div className={styles.reactions}>
-                                {Object.entries(message.reactions).map(([emoji, userIds]) => (
-                                  <button
-                                    key={emoji}
-                                    className={`${styles.reactionButton} ${
-                                      userIds.includes(currentUser?.id || "") ? styles.active : ""
-                                    }`}
-                                    onClick={() => handleReaction(message.id, emoji)}
-                                    title={`${userIds.length} ${userIds.includes(currentUser?.id || "") ? "(вы)" : ""}`}
-                                  >
-                                    {emoji} {userIds.length}
-                                  </button>
-                                ))}
+                                {Object.entries(message.reactions).map(([emoji, userIds]) => {
+                                  const userIdsArray = userIds as string[];
+                                  return (
+                                    <button
+                                      key={emoji}
+                                      className={`${styles.reactionButton} ${
+                                        userIdsArray.includes(currentUser?.id || "") ? styles.active : ""
+                                      }`}
+                                      onClick={() => handleReaction(message.id, emoji)}
+                                      title={`${userIdsArray.length} ${userIdsArray.includes(currentUser?.id || "") ? "(вы)" : ""}`}
+                                    >
+                                      {emoji} {userIdsArray.length}
+                                    </button>
+                                  );
+                                })}
                               </div>
                             )}
                           </div>

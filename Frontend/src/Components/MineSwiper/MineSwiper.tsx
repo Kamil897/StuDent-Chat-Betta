@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import styles from './Minesweeper.module.css';
+import { handleGameWin } from '../../utils/gameRewards';
 
 interface Cell {
   isMine: boolean;
@@ -25,7 +24,6 @@ const difficultySettings: Record<Difficulty, DifficultyConfig> = {
 };
 
 const Minesweeper: React.FC = () => {
-  const navigate = useNavigate();
 
   const [difficulty, setDifficulty] = useState<Difficulty>('easy');
   const [board, setBoard] = useState<Cell[][]>([]);
@@ -170,7 +168,6 @@ const revealCell = useCallback((board: Cell[][], row: number, col: number): Cell
     if (allNonMinesRevealed) {
       setGameStatus('won');
       // Award points for win
-      const { handleGameWin } = require("../../utils/gameRewards");
       handleGameWin("Minesweeper");
       setIsTimerRunning(false);
     }
