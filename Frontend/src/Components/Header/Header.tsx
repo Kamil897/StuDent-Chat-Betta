@@ -6,10 +6,19 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getPoints } from "../../utils/points";
 
+type User = {
+  name?: string;
+  surname?: string;
+  email?: string;
+  username?: string;
+  avatarSeed?: string;
+};
+
 export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const [points, setPoints] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
   const bellRef = useRef<HTMLDivElement>(null);
 
   // Проверяем авторизацию при каждом рендере
@@ -17,6 +26,18 @@ export default function Header() {
     const auth = localStorage.getItem("isAuth") === "true";
     setIsAuth(auth);
     setPoints(getPoints());
+    
+    // Load user data for avatar
+    if (auth) {
+      try {
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          setUser(JSON.parse(savedUser));
+        }
+      } catch (e) {
+        console.error("Error loading user:", e);
+      }
+    }
   }, []);
 
   // Update points when they change
@@ -103,7 +124,15 @@ export default function Header() {
         {/* 🔥 Умная кнопка профиля */}
         <Link to={isAuth ? "/profile" : "/register"}>
           <button className={S.registerButton}>
-            <FaUser className={S.registerIcon} />
+            {isAuth && user?.avatarSeed ? (
+              <img
+                src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.avatarSeed}`}
+                alt="Profile"
+                className={S.avatar}
+              />
+            ) : (
+              <FaUser className={S.registerIcon} />
+            )}
           </button>
         </Link>
       </div>

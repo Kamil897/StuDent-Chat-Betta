@@ -47,6 +47,7 @@ function App() {
         <Route path='/Leaderboard' element={<Leaderboard/>}/>
         <Route path='/Friends' element={<ChatComponent/>}/>
         <Route path='/Wallet' element={<Wallet/>}/>
+        <Route path='/Admin' element={<AdminPanel/>}/>
       </Routes>
       <PointsNotification />
       <Footer />
