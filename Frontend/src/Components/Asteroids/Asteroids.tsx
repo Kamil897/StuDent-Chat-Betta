@@ -216,8 +216,11 @@ const Doom: React.FC = () => {
         }
       });
 
-      bulletsRef.current.forEach((b, bi) => {
-        asteroidsRef.current.forEach((a, ai) => {
+      // Use reverse iteration to safely remove elements
+      for (let bi = bulletsRef.current.length - 1; bi >= 0; bi--) {
+        const b = bulletsRef.current[bi];
+        for (let ai = asteroidsRef.current.length - 1; ai >= 0; ai--) {
+          const a = asteroidsRef.current[ai];
           if (Math.hypot(b.x - a.x, b.y - a.y) < a.size) {
             bulletsRef.current.splice(bi, 1);
             asteroidsRef.current.splice(ai, 1);
@@ -225,16 +228,17 @@ const Doom: React.FC = () => {
             setGameState(prev => ({ ...prev, score: newScore }));
             
             // Check if all asteroids are destroyed (win condition)
-            if (asteroidsRef.current.length === 1) { // Last asteroid being destroyed
-              setTimeout(() => {
-                if (asteroidsRef.current.length === 0) {
-                  handleGameWin("Asteroids");
-                }
-              }, 100);
+            // Check after removing the asteroid
+            if (asteroidsRef.current.length === 0 && !gameState.gameOver) {
+              // All asteroids destroyed - player wins!
+              handleGameWin("Asteroids");
+              setGameState(prev => ({ ...prev, gameOver: true }));
+              break;
             }
+            break; // Bullet hit an asteroid, no need to check other asteroids
           }
-        });
-      });
+        }
+      }
     };
 
     const loop = () => {

@@ -53,6 +53,11 @@ export function addPoints(amount: number, type: PointsTransactionType, source: s
   transactions.unshift(transaction);
   localStorage.setItem(STORAGE_KEY_TRANSACTIONS, JSON.stringify(transactions));
 
+  // Sync with leaderboard
+  import('./leaderboard').then(({ syncCurrentUserPoints }) => {
+    syncCurrentUserPoints();
+  });
+
   return newBalance;
 }
 

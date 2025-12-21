@@ -129,7 +129,7 @@ const NewsText: React.FC<NewsTextProps> = ({ p, ImgSrc, onShare }) => {
               setLike((prev) => (state ? prev + 1 : prev - 1));
             }}
           />
-          <Switch active={saved} onToggle={(state) => setSaved(state)} />
+          <Switch active={saved} onToggle={(state: boolean) => setSaved(state)} />
           <Share
             onToggle={() => setShowShareOptions((prev) => !prev)}
           />

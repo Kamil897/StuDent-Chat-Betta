@@ -165,11 +165,11 @@ const revealCell = useCallback((board: Cell[][], row: number, col: number): Cell
       row.every((cell) => cell.isMine || cell.isRevealed)
     );
 
-    if (allNonMinesRevealed) {
+    if (allNonMinesRevealed && gameStatus === 'playing') {
       setGameStatus('won');
+      setIsTimerRunning(false);
       // Award points for win
       handleGameWin("Minesweeper");
-      setIsTimerRunning(false);
     }
   };
 

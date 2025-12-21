@@ -1,4 +1,5 @@
 import { addPoints } from "./points";
+import { syncCurrentUserPoints } from "./leaderboard";
 
 export function handleGameWin(gameName: string): void {
   // Award points based on game
@@ -10,6 +11,21 @@ export function handleGameWin(gameName: string): void {
   };
 
   const points = pointsMap[gameName] || 5;
-  addPoints(points, "game_win", gameName);
+  const newBalance = addPoints(points, "game_win", gameName);
+  
+  // Sync with leaderboard
+  syncCurrentUserPoints();
+  
+  // Dispatch custom event to notify other components
+  const event = new CustomEvent("game-win", {
+    detail: { gameName, points, newBalance },
+  });
+  window.dispatchEvent(event);
+  
+  // Also dispatch storage event for cross-tab synchronization
+  window.dispatchEvent(new StorageEvent("storage", {
+    key: "user_points",
+    newValue: newBalance.toString(),
+  }));
 }
 

@@ -23,20 +23,39 @@ export default function Register() {
     });
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!isChecked) return;
 
     // 🎲 РАНДОМНЫЙ seed для аватара (1 раз при регистрации)
     const avatarSeed = crypto.randomUUID();
+    // Use email as stable ID, fallback to username
+    const userId = formData.email 
+      ? `user_${formData.email.replace(/[^a-zA-Z0-9]/g, '_')}`
+      : formData.username
+      ? `user_${formData.username.replace(/[^a-zA-Z0-9]/g, '_')}`
+      : `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const user = {
       ...formData,
+      id: userId,
       avatarSeed,
     };
 
     // сохраняем пользователя
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("isAuth", "true");
+    
+    // Добавляем пользователя в лидерборд (или обновляем существующего)
+    const { getOrCreateLeaderboardUser, removeDuplicates } = await import("../../utils/leaderboard");
+    getOrCreateLeaderboardUser(
+      userId,
+      formData.username,
+      `${formData.name} ${formData.surname}`.trim(),
+      formData.email,
+      avatarSeed
+    );
+    // Remove any duplicates
+    removeDuplicates();
 
     // очистка формы
     setFormData({

@@ -30,7 +30,17 @@ const Wallet: React.FC = () => {
       setStats(getPointsStats());
     };
 
+    // Listen for custom game-win event
+    const handleGameWin = () => {
+      setPoints(getPoints());
+      setTransactions(getTransactions());
+      setStats(getPointsStats());
+    };
+
     window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("game-win" as any, handleGameWin);
+    window.addEventListener("achievement-unlocked" as any, handleGameWin);
+    
     // Also check periodically for changes (for same-tab updates)
     const interval = setInterval(() => {
       setPoints(getPoints());
@@ -40,6 +50,8 @@ const Wallet: React.FC = () => {
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("game-win" as any, handleGameWin);
+      window.removeEventListener("achievement-unlocked" as any, handleGameWin);
       clearInterval(interval);
     };
   }, []);

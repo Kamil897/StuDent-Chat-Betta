@@ -88,9 +88,10 @@ const PongNeon: React.FC = () => {
 
     const resetBall = () => {
       if (state.playerScore >= winningScore || state.aiScore >= winningScore) {
+        const playerWon = state.playerScore >= winningScore;
         setIsRunning(false);
         // Award points if player won
-        if (state.playerScore >= winningScore) {
+        if (playerWon) {
           handleGameWin("Ping Pong");
         }
         state.playerScore = 0;

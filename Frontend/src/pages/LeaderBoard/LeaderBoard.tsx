@@ -1,79 +1,94 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./LeaderBoard.module.css";
-
-type User = {
-  id: number;
-  name: string;
-  avatar?: string;
-};
-
-type LeaderboardItem = {
-  id: number;
-  score: number;
-  rank: number;
-  user: User;
-};
-
-type GameKey = "snake" | "asteroids" | "pingpong" | "tictactoe";
+import { getLeaderboard, syncCurrentUserPoints, removeDuplicates, type LeaderboardUser } from "../../utils/leaderboard";
 
 export default function Leaderboard() {
-  const [activeTab, setActiveTab] = useState<"games" | "shop">("games");
+  const [activeTab, setActiveTab] = useState<"points" | "games">("points");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [selectedGame, setSelectedGame] = useState<GameKey>("snake");
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardUser[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const itemsPerPage = 10;
 
-  const games: { name: GameKey; label: string }[] = [
-    { name: "snake", label: "Snake" },
-    { name: "asteroids", label: "Asteroids" },
-    { name: "pingpong", label: "Ping Pong" },
-    { name: "tictactoe", label: "Tic Tac Toe" },
-  ];
+  useEffect(() => {
+    // Sync current user's points
+    syncCurrentUserPoints();
+    
+    // Remove duplicates before loading
+    removeDuplicates();
+    
+    // Load leaderboard data
+    const data = getLeaderboard();
+    setLeaderboardData(data);
+    
+    // Get current user ID
+    try {
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        const user = JSON.parse(savedUser);
+        setCurrentUserId(user.id || null);
+      }
+    } catch (e) {
+      console.error("Error loading current user:", e);
+    }
+  }, []);
 
-  // 🔹 Статичные данные
-  const leaderboardData: Record<GameKey, LeaderboardItem[]> = {
-    snake: [
-      {
-        id: 1,
-        score: 1200,
-        rank: 1,
-        user: { id: 101, name: "Alex" },
-      },
-      {
-        id: 2,
-        score: 950,
-        rank: 2,
-        user: { id: 102, name: "Maria" },
-      },
-      {
-        id: 3,
-        score: 800,
-        rank: 3,
-        user: { id: 103, name: "John" },
-      },
-    ],
-    asteroids: [
-      {
-        id: 4,
-        score: 3000,
-        rank: 1,
-        user: { id: 104, name: "Leo" },
-      },
-    ],
-    pingpong: [],
-    tictactoe: [],
-  };
+  // Listen for points updates
+  useEffect(() => {
+    const handleStorageChange = () => {
+      syncCurrentUserPoints();
+      removeDuplicates();
+      const data = getLeaderboard();
+      setLeaderboardData(data);
+    };
 
-  const data = leaderboardData[selectedGame];
+    const handleGameWin = () => {
+      syncCurrentUserPoints();
+      removeDuplicates();
+      const data = getLeaderboard();
+      setLeaderboardData(data);
+    };
 
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("game-win" as any, handleGameWin);
+    
+    // Also check periodically
+    const interval = setInterval(() => {
+      syncCurrentUserPoints();
+      removeDuplicates();
+      const data = getLeaderboard();
+      setLeaderboardData(data);
+    }, 2000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("game-win" as any, handleGameWin);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const totalPages = Math.ceil(leaderboardData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentPlayers = data.slice(startIndex, startIndex + itemsPerPage);
+  const currentPlayers = leaderboardData.slice(startIndex, startIndex + itemsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  const getAvatarUrl = (user: LeaderboardUser) => {
+    if (user.avatarSeed) {
+      return `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.avatarSeed}`;
+    }
+    return '/profileimg.png';
+  };
+
+  const getRankIcon = (rank: number) => {
+    if (rank === 1) return "🥇";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
+    return "";
   };
 
   return (
@@ -84,92 +99,135 @@ export default function Leaderboard() {
         <div className={styles.tabs}>
           <button
             className={`${styles.tab} ${
-              activeTab === "games" ? styles.isActive : ""
+              activeTab === "points" ? styles.isActive : ""
             }`}
-            onClick={() => setActiveTab("games")}
+            onClick={() => {
+              setActiveTab("points");
+              setCurrentPage(1);
+            }}
           >
-            Очки по играм
+            ⭐ Баллы
           </button>
 
           <button
             className={`${styles.tab} ${
-              activeTab === "shop" ? styles.isActive : ""
+              activeTab === "games" ? styles.isActive : ""
             }`}
-            onClick={() => setActiveTab("shop")}
-          >
-            Баллы в магазине
-          </button>
-        </div>
-
-        {activeTab === "games" && (
-          <select
-            className={styles.gameSelect}
-            value={selectedGame}
-            onChange={(e) => {
-              setSelectedGame(e.target.value as GameKey);
+            onClick={() => {
+              setActiveTab("games");
               setCurrentPage(1);
             }}
           >
-            {games.map((game) => (
-              <option key={game.name} value={game.name}>
-                {game.label}
-              </option>
-            ))}
-          </select>
-        )}
+            🎮 Игры
+          </button>
+        </div>
       </header>
 
-      {activeTab === "games" && (
+      {activeTab === "points" && (
         <div className={styles.table}>
           <div className={`${styles.row} ${styles.head}`}>
-            <div className={styles.cell}>#</div>
-            <div className={styles.cell}>Игрок</div>
-            <div className={styles.cell}>Очки</div>
             <div className={styles.cell}>Место</div>
+            <div className={styles.cell}>Игрок</div>
+            <div className={styles.cell}>Баллы</div>
+            <div className={styles.cell}>Ранг</div>
           </div>
 
           {currentPlayers.length === 0 ? (
-            <div className={styles.emptyState}>Нет данных</div>
+            <div className={styles.emptyState}>
+              <p>Пока нет игроков в лидерборде</p>
+              <p className={styles.emptyHint}>
+                Играйте в игры и зарабатывайте баллы, чтобы попасть в топ!
+              </p>
+            </div>
           ) : (
-            currentPlayers.map((p, i) => (
-              <div className={styles.row} key={p.id}>
-                <div className={styles.cell}>{startIndex + i + 1}</div>
-                <div className={styles.cell}>{p.user.name}</div>
-                <div className={styles.cell}>{p.score}</div>
-                <div className={styles.cell}>{p.rank}</div>
-              </div>
-            ))
+            currentPlayers.map((user, i) => {
+              const rank = startIndex + i + 1;
+              const isCurrentUser = user.id === currentUserId;
+              
+              return (
+                <div 
+                  className={`${styles.row} ${isCurrentUser ? styles.currentUser : ""}`} 
+                  key={user.id}
+                >
+                  <div className={styles.cell}>
+                    <span className={styles.rank}>
+                      {getRankIcon(rank)} {rank}
+                    </span>
+                  </div>
+                  <div className={styles.cell}>
+                    <div className={styles.userInfo}>
+                      <img 
+                        src={getAvatarUrl(user)} 
+                        alt={user.name}
+                        className={styles.avatar}
+                      />
+                      <div>
+                        <div className={styles.userName}>
+                          {user.name || user.username}
+                          {isCurrentUser && <span className={styles.youBadge}> (Вы)</span>}
+                        </div>
+                        <div className={styles.userEmail}>{user.email}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.cell}>
+                    <span className={styles.points}>⭐ {user.points.toLocaleString()}</span>
+                  </div>
+                  <div className={styles.cell}>
+                    {rank <= 3 ? (
+                      <span className={styles.topRank}>{getRankIcon(rank)}</span>
+                    ) : (
+                      <span className={styles.rankNumber}>#{rank}</span>
+                    )}
+                  </div>
+                </div>
+              );
+            })
           )}
         </div>
       )}
 
-      <footer className={styles.footer}>
-        <div className={styles.pagination}>
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            ‹
-          </button>
-
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              key={i}
-              className={currentPage === i + 1 ? styles.isActive : ""}
-              onClick={() => handlePageChange(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            ›
-          </button>
+      {activeTab === "games" && (
+        <div className={styles.table}>
+          <div className={styles.emptyState}>
+            <p>Раздел "Игры" скоро будет доступен</p>
+            <p className={styles.emptyHint}>
+              Здесь будут отображаться рекорды по отдельным играм
+            </p>
+          </div>
         </div>
-      </footer>
+      )}
+
+      {leaderboardData.length > 0 && (
+        <footer className={styles.footer}>
+          <div className={styles.pagination}>
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              ‹
+            </button>
+
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                className={currentPage === i + 1 ? styles.isActive : ""}
+                onClick={() => handlePageChange(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              ›
+            </button>
+          </div>
+        </footer>
+      )}
     </section>
   );
 }
+
