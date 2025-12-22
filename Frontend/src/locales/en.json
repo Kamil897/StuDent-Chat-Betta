@@ -1,0 +1,254 @@
+{
+   "nav": {
+     "home": "STUDENT CHAT",
+     "ai": "Cognia AI",
+     "trai": "Trai",
+     "news": "News"
+   },
+
+   "notifications": {
+     "one": "New message",
+     "two": "IELTS simulation is ready",
+     "three": "Cognia AI updated"
+   },
+
+   "about": {
+      "title": "ABOUT US",
+      "text": "STUDENT-CHAT is a modern educational platform created to support students at all stages of learning and preparation for university admission. We combine technology and expert experience to deliver effective and personalized education."
+   },
+
+   "main": {
+    "hero": {
+      "title": "STUDENT CHAT",
+      "subtitle": "a place of help — for whom?"
+    },
+    "cards": {
+      "title": "HOW WE CAN HELP",
+      "items": {
+        "communication": {
+          "title": "Communication and support",
+          "text": "We are not just an information platform — we are a place where everyone can share experience and get inspired."
+        },
+        "flexibility": {
+          "title": "Learning flexibility",
+          "text": "You choose how to study: online classes, tests, or recorded lessons."
+        },
+        "skills": {
+          "title": "Skill development",
+          "text": "In addition to admission, we help develop skills useful in life and studies."
+        }
+      }
+    },
+    "why": {
+      "title": "WHY CHOOSE US?",
+      "big": {
+        "title": "24/7 Availability",
+        "text": "We're always here! You can ask questions, get support, and find answers whenever it's convenient for you."
+      },
+      "green": {
+        "title": "Safe and friendly space",
+        "text": "We strive to make communication on the platform comfortable. Here, you can be yourself and share ideas without fear."
+      },
+      "pink": {
+        "title": "Best mentors",
+        "text": "Experienced specialists will help you understand complex topics and prepare for important exams."
+      }
+    },
+    "how": {
+      "title": "HOW TO USE AI FOR STUDYING",
+      "steps": {
+        "1": { "title": "Formulate your question", "text": "Ask questions clearly and precisely." },
+        "2": { "title": "Clarify details", "text": "Use follow-up questions and explanations." },
+        "3": { "title": "Learn from answers", "text": "Apply knowledge in practice." },
+        "4": { "title": "Apply knowledge", "text": "Use Cognia as a learning tool." },
+        "5": { "title": "Use AI responsibly", "text": "AI is an assistant, not a shortcut." }
+      },
+      "disclaimer": "AI helps learning but does not replace it."
+    }
+  },
+
+  "footer": {
+      "quote": "Learn. Communicate. Grow.",
+      "links": {
+        "ielts": "IELTS Simulator",
+        "ai": "Cognia AI",
+        "account": "My Account"
+      },
+      "rights": "© 2025 STUDENTCHAT LLC. All rights reserved.",
+      "contact": "contact@student-chat.online"
+   },
+
+   "AIchat": {
+      "sidebar": {
+        "title": "Chats",
+        "newChat": "New chat"
+      },
+      "welcome": {
+        "title": "Welcome!",
+        "placeholder": "Ask something..."
+      },
+      "input": {
+        "placeholder": "Type a message..."
+      },
+      "typing": "Typing..."
+    },
+
+    "leaderboard": {
+      "title": "LeaderBoard",
+
+      "tabs": {
+        "points": "Points",
+        "games": "Games"
+      },
+
+      "table": {
+        "rank": "Place",
+        "player": "Player",
+        "points": "Points",
+        "top": "Rank"
+      },
+
+      "empty": {
+        "noPlayers": "There are no players on the leaderboard yet.",
+        "hint": "Play games and earn points to get to the top!"
+      },
+
+      "you": "You",
+      "gamesComingSoon": "The \"Games\" section will be available soon.",
+      "gamesHint": "Records for individual games will be displayed here."
+    },
+
+    "wallet": {
+    "title": "Wallet",
+    "loading": "Loading wallet...",
+    "tabs": {
+      "balance": "Balance",
+      "transactions": "Transactions",
+      "stats": "Stats"
+    },
+
+    "balance": {
+      "points": "Points",
+      "earnPointsFrom": "Points can be earned from:",
+      "earnPoints": {
+        "gameWin": "Game wins (+{{points}} points)",
+        "achievement": "Achievements (+{{points}} points)"
+      },
+
+      "spendPointsSoon": "Points can be spent in the shop (coming soon)"
+    },
+
+    "transactions": {
+      "noTransactions": "No transactions",
+      "emptyHint": "Play games or earn achievements to gain points!"
+    },
+
+    "transactionLabels": {
+      "gameWin": "Game win",
+      "achievement": "Achievement",
+      "shopPurchase": "Shop purchase",
+      "reward": "Reward"
+    },
+
+    "stats": {
+      "totalEarned": "Total earned",
+      "totalSpent": "Total spent",
+      "gameWins": "Game wins",
+      "achievements": "Achievements",
+      "totalTransactions": "Total transactions",
+      "earnedPoints": "Earned: {{points}} ⭐️"
+    }
+   },
+
+   "achievements": {
+     "title": "Achievements",
+
+      "filters": {
+         "all": "All",
+         "earned": "Earned",
+         "points": "Points"
+      },
+
+      "items": {
+         "firstStep": {
+            "title": "First Step",
+            "description": "Complete your first task"
+         },
+
+         "persistence": {
+            "title": "Persistence",
+            "description": "Log in 7 days in a row"
+         },
+
+         "pro": {
+            "title": "Pro",
+            "description": "Score 100 points"
+         }
+      }
+     },
+
+     "profile": {
+      "name": "Name",
+      "email": "Email",
+      "menu": {
+        "leaderboard": "Leaderboard",
+        "shop": "Shop",
+        "games": "Games",
+        "wallet": "Wallet",
+        "achievements": "Achievements",
+        "friends": "Friends & Chat",
+        "logout": "Log out"
+      }
+    },
+
+    "chat": {
+    "tabs": {
+      "chats": "Chats",
+      "friends": "Friends"
+    },
+    "createRoom": {
+      "title": "Create Room",
+      "namePlaceholder": "Room name",
+      "type": {
+        "channel": "Channel",
+        "group": "Group",
+        "direct": "Direct Chat"
+      },
+      "category": {
+        "all": "All",
+        "subject": "Subject",
+        "university": "University",
+        "country": "Country",
+        "interest": "Interest"
+      },
+      "create": "Create",
+      "cancel": "Cancel"
+    },
+    "friends": {
+      "addFriend": "Add Friend",
+      "idOrUsername": "ID or username",
+      "sendRequest": "Send Request",
+      "empty": "You have no friends yet",
+      "hint": "Add friends to start chatting",
+      "requestsEmpty": "No new requests",
+      "accept": "Accept",
+      "reject": "Reject",
+      "remove": "Remove Friend",
+      "message": "Send Message",
+      "requests": "Requests"
+    },
+    "chatArea": {
+      "members": "members",
+      "noRoomSelected": "Select a chat to start chatting",
+      "noRoomSelectedHint": "Create a new room or choose an existing one",
+      "noMessages": "No messages yet. Start chatting!",
+      "messagePlaceholder": "Type a message...",
+      "fileTooltip": "Attach file",
+      "voiceTooltip": "Voice message"
+    },
+    "reactions": {
+      "you": "(you)"
+    }
+  }
+ }
+ 

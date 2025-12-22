@@ -1,135 +1,115 @@
-import About from "../../Components/About/About"
-import Card from "../../Components/Card/Card"
-import S from "./Main.module.css"
+import About from "../../Components/About/About";
+import Card from "../../Components/Card/Card";
+import S from "./Main.module.css";
+import { useTranslation } from "react-i18next";
 
 export default function Main() {
-    return (
-        <div className={S.landingPage}>
+  const { t } = useTranslation();
 
-            <div className={S.hero}>
-                <h1>STUDENT CHAT</h1>
-                <p>место помощи — кому?</p>
-            </div>
+  return (
+    <div className={S.landingPage}>
+      {/* HERO */}
+      <div className={S.hero}>
+        <h1>{t("main.hero.title")}</h1>
+        <p>{t("main.hero.subtitle")}</p>
+      </div>
 
-            <About />
+      <About />
 
-            {/* ===== CARDS BLOCK ===== */}
-            <div className={S.Cards}>
-                <h1 className={S.CardsTitle}>КАК МЫ МОЖЕМ ПОМОЧЬ</h1>
+      {/* CARDS */}
+      <div className={S.Cards}>
+        <h1 className={S.CardsTitle}>{t("main.cards.title")}</h1>
 
-                <div className={S.CardsWrapper}>
-                    <Card
-                        title="Общение и взаимопомощь"
-                        text="Мы не просто платформа для информации — мы место, где каждый может делиться своим опытом и вдохновляться историей других."
-                    />
+        <div className={S.CardsWrapper}>
+          <Card
+            title={t("main.cards.items.communication.title")}
+            text={t("main.cards.items.communication.text")}
+          />
 
-                    <Card
-                        title="Гибкость в обучении"
-                        text="Вы сами выбираете, как учиться: участвовать в онлайн-занятиях, проходить тесты или смотреть записи уроков."
-                    />
+          <Card
+            title={t("main.cards.items.flexibility.title")}
+            text={t("main.cards.items.flexibility.text")}
+          />
 
-                    <Card
-                        title="Развитие навыков"
-                        text="Помимо поступления, мы помогаем развивать навыки, которые пригодятся в жизни и учёбе."
-                    />
-                </div>
-            </div>
-
-            {/* ===== WHY CHOOSE US ===== */}
-            <div className={S.whyUs}>
-                <h1>ПОЧЕМУ ВЫБИРАЮТ НАС?</h1>
-
-                <div className={S.whyGrid}>
-
-                    <div className={S.bigBlurCard}>
-                        <div className={S.blurBlob}></div>
-                        <img src="/whybig.png" alt="Big" />
-                        <h2>Доступность 24/7</h2>
-                        <p>
-                            Мы всегда на связи! вы можете задавать вопросы, получать поддержку и находить ответы тогда, когда это вам удобно.
-                        </p>
-                    </div>
-
-                    <div className={S.rightColumn}>
-                        <div className={S.smallCardGreen}>
-                            <img src="/whygreen.png" alt="Big" width={184} height={184}/>
-                            <div className={S.smallText}>
-                                <h3>Безопасное и доброжелательное
-                                пространство</h3>
-                                <p>
-                                Мы следим за тем, чтобы общение на платформе было комфортным. Здесь вы можете быть собой, делиться идеям и и мнениями без страха быть осуждённым.
-                                </p>    
-                            </div>
-                        </div>
-
-                        <div className={S.smallCardPink}>
-                            <img src="/whypink.png" alt="Big" width={184} height={184}/>
-                            <div className={S.smallText}>
-                                <h3>Лучшие наставники</h3>
-                                <p>
-                                    Опытные специалисты помогут разобраться в сложных темах, составить учебный план и даже подготовить вас к важным экзаменам.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* ===== HOW TO USE AI ===== */}
-            <div className={S.howTo}>
-                <h1>КАК ПРАВИЛЬНО ИСПОЛЬЗОВАТЬ ИИ ДЛЯ УЧЁБЫ</h1>
-
-                {/* Верхние шаги */}
-                <div className={S.howTopBoxes}>
-                    <div className={S.stepLarge}>
-                        <span>01</span>
-                        <h3>Сформулируй вопрос</h3>
-                        <p>
-                        Формулируйте вопросы максимально конкретно и ясно
-                        </p>
-                    </div>
-
-                    <div className={S.stepLarge}>
-                        <span>02</span>
-                        <h3>Уточняй детали</h3>
-                        <p>
-                        Используйте возможность уточнений и дополнительных объяснений.
-                        </p>
-                    </div>
-                </div>
-
-                {/* Нижние шаги */}
-                <div className={S.howBottomBoxes}>
-                    <div className={S.stepSmall}>
-                        <span>03</span>
-                        <h3>Получай ответ и учись</h3>
-                        <p>
-                        Применяйте полученные знания на практике, решайте задачи и тесты.
-                        </p>
-                    </div>
-
-                    <div className={S.stepSmall}>
-                        <span>04</span>
-                        <h3>Применяй знания</h3>
-                        <p>
-                        Рассматривайте Cognia как инструмент развития, а не shortcut в обучении.
-                        </p>
-                    </div>
-
-                    <div className={S.stepSmall}>
-                        <span>05</span>
-                        <h3>Используй ИИ правильно</h3>
-                        <p>
-                            ИИ — это помощник. Он создан для понимания тем и развития, 
-                            а не для списывания или обмана.
-                        </p>
-                    </div>
-                </div>
-
-                <p className={S.disclaimer}>ИИ — инструмент, который помогает учиться, а не заменяет обучение.</p>
-            </div>
-
+          <Card
+            title={t("main.cards.items.skills.title")}
+            text={t("main.cards.items.skills.text")}
+          />
         </div>
-    )
+      </div>
+
+      {/* WHY US */}
+      <div className={S.whyUs}>
+        <h1>{t("main.why.title")}</h1>
+
+        <div className={S.whyGrid}>
+          <div className={S.bigBlurCard}>
+            <div className={S.blurBlob}></div>
+            <img src="/whybig.png" alt="Big" />
+            <h2>{t("main.why.big.title")}</h2>
+            <p>{t("main.why.big.text")}</p>
+          </div>
+
+          <div className={S.rightColumn}>
+            <div className={S.smallCardGreen}>
+              <img src="/whygreen.png" alt="Green" />
+              <div className={S.smallText}>
+                <h3>{t("main.why.green.title")}</h3>
+                <p>{t("main.why.green.text")}</p>
+              </div>
+            </div>
+
+            <div className={S.smallCardPink}>
+              <img src="/whypink.png" alt="Pink" />
+              <div className={S.smallText}>
+                <h3>{t("main.why.pink.title")}</h3>
+                <p>{t("main.why.pink.text")}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* HOW TO */}
+      <div className={S.howTo}>
+        <h1>{t("main.how.title")}</h1>
+
+        <div className={S.howTopBoxes}>
+          <div className={S.stepLarge}>
+            <span>01</span>
+            <h3>{t("main.how.steps.1.title")}</h3>
+            <p>{t("main.how.steps.1.text")}</p>
+          </div>
+
+          <div className={S.stepLarge}>
+            <span>02</span>
+            <h3>{t("main.how.steps.2.title")}</h3>
+            <p>{t("main.how.steps.2.text")}</p>
+          </div>
+        </div>
+
+        <div className={S.howBottomBoxes}>
+          <div className={S.stepSmall}>
+            <span>03</span>
+            <h3>{t("main.how.steps.3.title")}</h3>
+            <p>{t("main.how.steps.3.text")}</p>
+          </div>
+
+          <div className={S.stepSmall}>
+            <span>04</span>
+            <h3>{t("main.how.steps.4.title")}</h3>
+            <p>{t("main.how.steps.4.text")}</p>
+          </div>
+
+          <div className={S.stepSmall}>
+            <span>05</span>
+            <h3>{t("main.how.steps.5.title")}</h3>
+            <p>{t("main.how.steps.5.text")}</p>
+          </div>
+        </div>
+
+        <p className={S.disclaimer}>{t("main.how.disclaimer")}</p>
+      </div>
+    </div>
+  );
 }

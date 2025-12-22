@@ -22,6 +22,7 @@ import Leaderboard from './pages/LeaderBoard/LeaderBoard'
 import Wallet from './pages/Wallet/Wallet'
 import PointsNotification from './Components/PointsNotification/PointsNotification'
 import News from './pages/News/News'
+import Achievements from './pages/Achievements/Achievements'
 
 function App() {
   return (
@@ -47,7 +48,7 @@ function App() {
         <Route path='/Leaderboard' element={<Leaderboard/>}/>
         <Route path='/Friends' element={<ChatComponent/>}/>
         <Route path='/Wallet' element={<Wallet/>}/>
-        <Route path='/Admin' element={<AdminPanel/>}/>
+        <Route path='/Achievements' element={<Achievements/>}/>
       </Routes>
       <PointsNotification />
       <Footer />
@@ -56,4 +57,3 @@ function App() {
 }
 
 export default App
-

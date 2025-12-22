@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./Wallet.module.css";
 import {
   getPoints,
@@ -7,9 +8,9 @@ import {
   type PointsTransaction,
 } from "../../utils/points";
 
-/* ================= COMPONENT ================= */
-
 const Wallet: React.FC = () => {
+  const { t } = useTranslation();
+
   const [points, setPoints] = useState<number>(0);
   const [transactions, setTransactions] = useState<PointsTransaction[]>([]);
   const [stats, setStats] = useState<ReturnType<typeof getPointsStats> | null>(null);
@@ -17,20 +18,17 @@ const Wallet: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"balance" | "transactions" | "stats">("balance");
 
   useEffect(() => {
-    // Load data from localStorage
     setPoints(getPoints());
     setTransactions(getTransactions());
     setStats(getPointsStats());
     setLoading(false);
 
-    // Listen for storage changes (when points are updated from other components)
     const handleStorageChange = () => {
       setPoints(getPoints());
       setTransactions(getTransactions());
       setStats(getPointsStats());
     };
 
-    // Listen for custom game-win event
     const handleGameWin = () => {
       setPoints(getPoints());
       setTransactions(getTransactions());
@@ -40,8 +38,7 @@ const Wallet: React.FC = () => {
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("game-win" as any, handleGameWin);
     window.addEventListener("achievement-unlocked" as any, handleGameWin);
-    
-    // Also check periodically for changes (for same-tab updates)
+
     const interval = setInterval(() => {
       setPoints(getPoints());
       setTransactions(getTransactions());
@@ -55,8 +52,6 @@ const Wallet: React.FC = () => {
       clearInterval(interval);
     };
   }, []);
-
-  /* ================= HELPERS ================= */
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("ru-RU", {
@@ -79,27 +74,21 @@ const Wallet: React.FC = () => {
 
   const getTransactionLabel = (type: PointsTransaction["type"]) => {
     const labels: Record<PointsTransaction["type"], string> = {
-      game_win: "Победа в игре",
-      achievement: "Достижение",
-      shop_purchase: "Покупка в магазине",
-      reward: "Награда",
+      game_win: t("wallet.transactionLabels.gameWin"),
+      achievement: t("wallet.transactionLabels.achievement"),
+      shop_purchase: t("wallet.transactionLabels.shopPurchase"),
+      reward: t("wallet.transactionLabels.reward"),
     };
     return labels[type] || type;
   };
 
-  const getTransactionColor = (_type: PointsTransaction["type"], amount: number) => {
-    if (amount > 0) {
-      return "#4CAF50"; // Green for earning
-    }
-    return "#f44336"; // Red for spending
-  };
-
-  /* ================= UI ================= */
+  const getTransactionColor = (_type: PointsTransaction["type"], amount: number) =>
+    amount > 0 ? "#4CAF50" : "#f44336";
 
   if (loading) {
     return (
       <div className={styles["wallet-container"]}>
-        <div className={styles.loading}>Загрузка кошелька...</div>
+        <div className={styles.loading}>{t("wallet.loading")}</div>
       </div>
     );
   }
@@ -107,7 +96,7 @@ const Wallet: React.FC = () => {
   return (
     <div className={styles["wallet-container"]}>
       <div className={styles["wallet-header"]}>
-        <h2>💰 Кошелек</h2>
+        <h2>💰 {t("wallet.title")}</h2>
       </div>
 
       <div className={styles.tabs}>
@@ -115,19 +104,19 @@ const Wallet: React.FC = () => {
           className={`${styles.tab} ${activeTab === "balance" ? styles.active : ""}`}
           onClick={() => setActiveTab("balance")}
         >
-          Баланс
+          {t("wallet.tabs.balance")}
         </button>
         <button
           className={`${styles.tab} ${activeTab === "transactions" ? styles.active : ""}`}
           onClick={() => setActiveTab("transactions")}
         >
-          История
+          {t("wallet.tabs.transactions")}
         </button>
         <button
           className={`${styles.tab} ${activeTab === "stats" ? styles.active : ""}`}
           onClick={() => setActiveTab("stats")}
         >
-          Статистика
+          {t("wallet.tabs.stats")}
         </button>
       </div>
 
@@ -137,17 +126,15 @@ const Wallet: React.FC = () => {
           <div className={styles["balance-cards"]}>
             <div className={`${styles["balance-card"]} ${styles.points}`}>
               <div className={styles["balance-icon"]}>⭐️</div>
-              <h3>Баллы</h3>
+              <h3>{t("wallet.balance.points")}</h3>
               <p className={styles["balance-amount"]}>{points.toLocaleString()}</p>
               <div className={styles["balance-info"]}>
-                <p>Баллы можно получить за:</p>
+                <p>{t("wallet.balance.earnPointsFrom")}</p>
                 <ul>
-                  <li>🎮 Победы в играх (+15 баллов)</li>
-                  <li>🏆 Достижения (+5 баллов)</li>
+                  <li>🎮 {t("wallet.balance.earnPoints.gameWin", { points: 15 })}</li>
+                  <li>🏆 {t("wallet.balance.earnPoints.achievement", { points: 5 })}</li>
                 </ul>
-                <p className={styles["balance-note"]}>
-                  Баллы можно тратить в магазине (скоро)
-                </p>
+                <p className={styles["balance-note"]}>{t("wallet.balance.spendPointsSoon")}</p>
               </div>
             </div>
           </div>
@@ -159,10 +146,8 @@ const Wallet: React.FC = () => {
         <div className={styles["transactions-section"]}>
           {transactions.length === 0 ? (
             <div className={styles["empty-state"]}>
-              <p>Нет транзакций</p>
-              <p className={styles["empty-hint"]}>
-                Играйте в игры или получайте достижения, чтобы заработать баллы!
-              </p>
+              <p>{t("wallet.transactions.noTransactions")}</p>
+              <p className={styles["empty-hint"]}>{t("wallet.transactions.emptyHint")}</p>
             </div>
           ) : (
             transactions.map((t) => (
@@ -175,9 +160,7 @@ const Wallet: React.FC = () => {
                 </span>
 
                 <div className={styles["transaction-info"]}>
-                  <div className={styles["transaction-title"]}>
-                    {getTransactionLabel(t.type)}
-                  </div>
+                  <div className={styles["transaction-title"]}>{getTransactionLabel(t.type)}</div>
                   <div className={styles["transaction-source"]}>{t.source}</div>
                   <small className={styles["transaction-date"]}>{formatDate(t.createdAt)}</small>
                 </div>
@@ -199,33 +182,33 @@ const Wallet: React.FC = () => {
       {activeTab === "stats" && stats && (
         <div className={styles["stats-section"]}>
           <div className={styles["stat-card"]}>
-            <h4>Всего заработано</h4>
+            <h4>{t("wallet.stats.totalEarned")}</h4>
             <p className={styles["stat-value"]}>+{stats.totalEarned.toLocaleString()} ⭐️</p>
           </div>
 
           <div className={styles["stat-card"]}>
-            <h4>Всего потрачено</h4>
+            <h4>{t("wallet.stats.totalSpent")}</h4>
             <p className={styles["stat-value"]}>-{stats.totalSpent.toLocaleString()} ⭐️</p>
           </div>
 
           <div className={styles["stat-card"]}>
-            <h4>Побед в играх</h4>
+            <h4>{t("wallet.stats.gameWins")}</h4>
             <p className={styles["stat-value"]}>{stats.gameWins}</p>
             <p className={styles["stat-subtext"]}>
-              Заработано: {stats.gameWins * 15} ⭐️
+              {t("wallet.stats.earnedPoints", { points: stats.gameWins * 15 })}
             </p>
           </div>
 
           <div className={styles["stat-card"]}>
-            <h4>Достижений</h4>
+            <h4>{t("wallet.stats.achievements")}</h4>
             <p className={styles["stat-value"]}>{stats.achievements}</p>
             <p className={styles["stat-subtext"]}>
-              Заработано: {stats.achievements * 5} ⭐️
+              {t("wallet.stats.earnedPoints", { points: stats.achievements * 5 })}
             </p>
           </div>
 
           <div className={styles["stat-card"]}>
-            <h4>Всего транзакций</h4>
+            <h4>{t("wallet.stats.totalTransactions")}</h4>
             <p className={styles["stat-value"]}>{transactions.length}</p>
           </div>
         </div>

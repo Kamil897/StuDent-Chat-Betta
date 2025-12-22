@@ -26,6 +26,7 @@ import {
   type FriendRequest,
 } from "../../utils/friendsStorage";
 import { Mic, Paperclip, Smile, Send, Plus, Hash, Users, UserPlus, MessageCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const ChatComponent: React.FC = () => {
   const [sidebarTab, setSidebarTab] = useState<"chats" | "friends">("chats");
@@ -48,6 +49,7 @@ const ChatComponent: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const voiceRecorderRef = useRef<MediaRecorder | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadRooms();
@@ -266,11 +268,11 @@ const ChatComponent: React.FC = () => {
   const selectedRoom = rooms.find((r) => r.id === selectedRoomId);
 
   const categoryLabels: Record<ChannelCategory | "all", string> = {
-    all: "Все",
-    subject: "Предметы",
-    university: "Вузы",
-    country: "Страны",
-    interest: "Интересы",
+    all: "chat.createRoom.category.all",
+    subject: "chat.createRoom.category.subject",
+    university: "chat.createRoom.category.university",
+    country: "chat.createRoom.category.country",
+    interest: "chat.createRoom.category.interest",
   };
 
   const commonReactions = ["👍", "❤️", "😂", "🎉", "🔥", "👏"];
@@ -286,14 +288,14 @@ const ChatComponent: React.FC = () => {
             onClick={() => setSidebarTab("chats")}
           >
             <MessageCircle size={18} />
-            Чаты
+            {t("chat.tabs.chats")}
           </button>
           <button
             className={`${styles.sidebarTab} ${sidebarTab === "friends" ? styles.active : ""}`}
             onClick={() => setSidebarTab("friends")}
           >
             <Users size={18} />
-            Друзья
+            {t("chat.tabs.friends")}
             {friendRequests.length > 0 && (
               <span className={styles.badge}>{friendRequests.length}</span>
             )}
@@ -304,7 +306,7 @@ const ChatComponent: React.FC = () => {
         {sidebarTab === "chats" && (
           <>
             <div className={styles.sidebarHeader}>
-              <h2>Чаты</h2>
+              <h2>{t("chat.tabs.chats")}</h2>
               <button
                 className={styles.newRoomButton}
                 onClick={() => setShowCreateRoom(!showCreateRoom)}
@@ -318,7 +320,7 @@ const ChatComponent: React.FC = () => {
           <div className={styles.createRoomForm}>
             <input
               type="text"
-              placeholder="Название комнаты"
+              placeholder={t("chat.createRoom.namePlaceholder")}
               value={newRoomName}
               onChange={(e) => setNewRoomName(e.target.value)}
               className={styles.input}
@@ -328,9 +330,9 @@ const ChatComponent: React.FC = () => {
               onChange={(e) => setNewRoomType(e.target.value as ChatType)}
               className={styles.select}
             >
-              <option value="channel">Канал</option>
-              <option value="group">Группа</option>
-              <option value="direct">Личный чат</option>
+                <option value="channel">{t("chat.createRoom.type.channel")}</option>
+                <option value="group">{t("chat.createRoom.type.group")}</option>
+                <option value="direct">{t("chat.createRoom.type.direct")}</option>
             </select>
             {newRoomType === "channel" && (
               <select
@@ -338,21 +340,21 @@ const ChatComponent: React.FC = () => {
                 onChange={(e) => setNewRoomCategory(e.target.value as ChannelCategory)}
                 className={styles.select}
               >
-                <option value="subject">Предмет</option>
-                <option value="university">Вуз</option>
-                <option value="country">Страна</option>
-                <option value="interest">Интерес</option>
+                <option value="subject">{t("chat.createRoom.category.subject")}</option>
+                <option value="university">{t("chat.createRoom.category.university")}</option>
+                <option value="country">{t("chat.createRoom.category.country")}</option>
+                <option value="interest">{t("chat.createRoom.category.interest")}</option>
               </select>
             )}
             <div className={styles.createRoomActions}>
               <button onClick={handleCreateRoom} className={styles.createButton}>
-                Создать
+              {t("chat.createRoom.create")}
               </button>
               <button
                 onClick={() => setShowCreateRoom(false)}
                 className={styles.cancelButton}
               >
-                Отмена
+                {t("chat.createRoom.cancel")}
               </button>
             </div>
           </div>
@@ -368,7 +370,7 @@ const ChatComponent: React.FC = () => {
               }`}
               onClick={() => setFilterCategory(cat)}
             >
-              {categoryLabels[cat]}
+              {t(categoryLabels[cat])}
           </button>
         ))}
       </div>
@@ -402,7 +404,7 @@ const ChatComponent: React.FC = () => {
         {sidebarTab === "friends" && (
           <>
             <div className={styles.sidebarHeader}>
-              <h2>Друзья</h2>
+              <h2>{t("chat.friends.addFriend")}</h2>
               <button
                 className={styles.newRoomButton}
                 onClick={() => setShowCreateRoom(!showCreateRoom)}
@@ -416,20 +418,20 @@ const ChatComponent: React.FC = () => {
               <div className={styles.createRoomForm}>
                 <input
                   type="text"
-                  placeholder="ID или имя пользователя"
+                  placeholder={t("chat.friends.idOrUsername")}
                   value={newFriendId}
                   onChange={(e) => setNewFriendId(e.target.value)}
                   className={styles.input}
                 />
                 <div className={styles.createRoomActions}>
                   <button onClick={handleAddFriend} className={styles.createButton}>
-                    Отправить заявку
+                  {t("chat.friends.sendRequest")}
                   </button>
                   <button
                     onClick={() => setShowCreateRoom(false)}
                     className={styles.cancelButton}
                   >
-                    Отмена
+                    {t("chat.createRoom.cancel")}
                   </button>
                 </div>
               </div>
@@ -443,7 +445,7 @@ const ChatComponent: React.FC = () => {
                 }`}
                 onClick={() => setFriendsTab("friends")}
               >
-                Друзья ({friends.length})
+                {t("chat.tabs.friends")} ({friends.length})
               </button>
               <button
                 className={`${styles.categoryFilter} ${
@@ -451,7 +453,7 @@ const ChatComponent: React.FC = () => {
                 }`}
                 onClick={() => setFriendsTab("requests")}
               >
-                Заявки ({friendRequests.length})
+                {t("chat.friends.requests")} ({friendRequests.length})
               </button>
             </div>
 
@@ -460,9 +462,9 @@ const ChatComponent: React.FC = () => {
               <div className={styles.friendsList}>
                 {friends.length === 0 ? (
                   <div className={styles.emptyState}>
-                    <p>У вас пока нет друзей</p>
+                    <p>{t("chat.friends.empty")}</p>
                     <p className={styles.emptyHint}>
-                      Добавьте друзей, чтобы начать общение
+                      {t("chat.friends.hint")}
                     </p>
                   </div>
                 ) : (
@@ -485,14 +487,14 @@ const ChatComponent: React.FC = () => {
                         <button
                           className={styles.messageFriendButton}
                           onClick={() => handleStartChatWithFriend(friend)}
-                          title="Написать сообщение"
+                          title={t("chat.friends.message")}
                         >
                           <MessageCircle size={18} />
                         </button>
                         <button
                           className={styles.removeFriendButton}
                           onClick={() => handleRemoveFriend(friend.id)}
-                          title="Удалить из друзей"
+                          title={t("chat.friends.remove")}
                         >
                           ✕
                         </button>
@@ -508,7 +510,7 @@ const ChatComponent: React.FC = () => {
               <div className={styles.friendsList}>
                 {friendRequests.length === 0 ? (
                   <div className={styles.emptyState}>
-                    <p>Нет новых заявок</p>
+                    <p>{t("chat.friends.requestsEmpty")}</p>
                   </div>
                 ) : (
                   friendRequests.map((request) => (
@@ -526,14 +528,14 @@ const ChatComponent: React.FC = () => {
                         <button
                           className={styles.acceptButton}
                           onClick={() => handleAcceptRequest(request.id)}
-                          title="Принять"
+                          title={t("chat.friends.accept")}
                         >
                           ✓
                         </button>
                         <button
                           className={styles.rejectButton}
                           onClick={() => handleRejectRequest(request.id)}
-                          title="Отклонить"
+                          title={t("chat.friends.reject")}
                         >
                           ✕
                         </button>
@@ -566,7 +568,7 @@ const ChatComponent: React.FC = () => {
               </div>
               {selectedRoom.type === "group" && (
                 <div className={styles.membersCount}>
-                  {selectedRoom.members.length} участников
+                  {selectedRoom.members.length} {t("chat.chatArea.members")}
                 </div>
               )}
             </div>
@@ -575,7 +577,7 @@ const ChatComponent: React.FC = () => {
             <div className={styles.messagesContainer}>
               {messages.length === 0 ? (
                 <div className={styles.emptyChat}>
-                  <p>Нет сообщений. Начните общение!</p>
+                  <p>{t("chat.chatArea.noRoomSelectedHint")}</p>
                 </div>
               ) : (
                 <div className={styles.messagesList}>
@@ -712,7 +714,7 @@ const ChatComponent: React.FC = () => {
               <button
                 className={styles.inputButton}
                 onClick={() => fileInputRef.current?.click()}
-                title="Прикрепить файл"
+                title={t("chat.chatArea.fileTooltip")}
               >
                 <Paperclip size={20} />
               </button>
@@ -725,7 +727,7 @@ const ChatComponent: React.FC = () => {
               <button
                 className={styles.inputButton}
                 onClick={handleVoiceRecord}
-                title="Голосовое сообщение"
+                title={t("chat.chatArea.voiceTooltip")}
               >
                 <Mic size={20} />
               </button>
@@ -753,8 +755,8 @@ const ChatComponent: React.FC = () => {
           </>
         ) : (
           <div className={styles.noRoomSelected}>
-            <h3>Выберите чат для начала общения</h3>
-            <p>Создайте новую комнату или выберите существующую</p>
+            <h3>{t("chat.chatArea.noRoomSelected")}</h3>
+            <p>{t("chat.chatArea.noRoomSelectedHint")}</p>
           </div>
         )}
       </div>

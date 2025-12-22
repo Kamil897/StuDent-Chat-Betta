@@ -1,0 +1,167 @@
+/* ===== Page ===== */
+.page {
+   padding: 24px 32px;
+   background: #ffffff;
+   min-height: 100vh;
+   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+   color: #111;
+ }
+ 
+ /* ===== Header ===== */
+ .header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   border-bottom: 1px solid #eee;
+   padding-bottom: 12px;
+ }
+ 
+ /* Title */
+ .title {
+   font-size: 20px;
+   font-weight: 600;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+ }
+ 
+ /* ===== Filters ===== */
+ .filters {
+   display: flex;
+   gap: 18px;
+ }
+ 
+ .filter {
+   background: none;
+   border: none;
+   padding: 6px 0;
+   font-size: 14px;
+   color: #777;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   gap: 6px;
+   border-bottom: 2px solid transparent;
+   transition: 0.2s ease;
+ }
+ 
+ .filter:hover {
+   color: #000;
+ }
+ 
+ .active {
+   color: #000;
+   border-bottom: 2px solid #000;
+ }
+ 
+ /* ===== Achievements Grid ===== */
+ .grid {
+   margin-top: 32px;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+   gap: 20px;
+ }
+ 
+ /* ===== Achievement Card ===== */
+ .card {
+   background: #f9f9f9;
+   border-radius: 14px;
+   padding: 18px;
+   display: flex;
+   align-items: center;
+   gap: 14px;
+   transition: 0.2s ease;
+   cursor: default;
+   min-height: 100px;
+ }
+ 
+ .card:hover {
+   transform: translateY(-2px);
+   background: #f3f3f3;
+ }
+ 
+ /* Locked achievement */
+ .locked {
+   opacity: 0.45;
+   filter: grayscale(0.7);
+ }
+ 
+ /* ===== Icon ===== */
+ .icon {
+   width: 44px;
+   height: 44px;
+   background: #fff;
+   border-radius: 12px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 26px;
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+ }
+ 
+ /* ===== Info ===== */
+ .info {
+   display: flex;
+   flex-direction: column;
+ }
+ 
+ .info h3 {
+   margin: 0;
+   font-size: 15px;
+   font-weight: 600;
+   color: #111;
+ }
+ 
+ .info p {
+   margin: 4px 0 0;
+   font-size: 13px;
+   color: #666;
+ }
+ 
+ /* ===== Points ===== */
+ .points {
+   margin-left: auto;
+   font-weight: 600;
+   font-size: 14px;
+   color: #222;
+   background: #fff;
+   padding: 6px 10px;
+   border-radius: 10px;
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+ }
+ 
+ /* ===== Empty state (если понадобится) ===== */
+ .empty {
+   margin-top: 40px;
+   text-align: center;
+   font-size: 14px;
+   color: #aaa;
+ }
+ 
+ /* ===== Responsive ===== */
+ @media (max-width: 768px) {
+   .page {
+     padding: 20px;
+   }
+ 
+   .header {
+     flex-direction: column;
+     align-items: flex-start;
+     gap: 12px;
+   }
+ 
+   .filters {
+     gap: 12px;
+   }
+ }
+ 
+ @media (max-width: 480px) {
+   .grid {
+     grid-template-columns: 1fr;
+   }
+ 
+   .card {
+     padding: 16px;
+   }
+ }
+ 

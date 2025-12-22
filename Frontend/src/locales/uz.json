@@ -1,0 +1,257 @@
+{
+   "nav": {
+     "home": "STUDENT CHAT",
+     "ai": "Cognia AI",
+     "trai": "Trai",
+     "news": "Yangiliklar"
+   },
+
+   "notifications": {
+     "one": "Yangi xabar",
+     "two": "IELTS simulyatsiyasi tayyor",
+     "three": "Cognia AI yangilandi"
+   },
+
+   "about": {
+      "title": "BIZ HAQIMIZDA",
+      "text": "STUDENT-CHAT — bu talabalarni ta’lim olish va oliy o‘quv yurtlariga kirishga tayyorgarlik ko‘rishning barcha bosqichlarida qo‘llab-quvvatlash uchun yaratilgan zamonaviy ta’lim platformasidir. Biz samarali va shaxsiylashtirilgan ta’lim uchun texnologiyalar va ekspert tajribasini birlashtiramiz."
+    },
+
+   "main": {
+    "hero": {
+      "title": "STUDENT CHAT",
+      "subtitle": "yordam maskani — kimlar uchun?"
+    },
+    "cards": {
+      "title": "BIZ QANDAY YORDAM BERAMIZ",
+      "items": {
+        "communication": {
+          "title": "Muloqot va o‘zaro yordam",
+          "text": "Biz shunchaki platforma emasmiz — bu tajriba almashish joyi."
+        },
+        "flexibility": {
+          "title": "Ta’limdagi moslashuvchanlik",
+          "text": "Qanday o‘qishni o‘zingiz tanlaysiz."
+        },
+        "skills": {
+          "title": "Ko‘nikmalarni rivojlantirish",
+          "text": "Hayot va ta’lim uchun foydali ko‘nikmalarni rivojlantiramiz."
+        }
+      }
+    },
+    "why": {
+      "title": "NEGA BIZNI TANLASHADI?",
+      "big": {
+        "title": "24/7 mavjudlik",
+        "text": "Biz har doim shu yerdamiz! Siz o'zingizga qulay bo'lgan vaqtda savollar berishingiz, yordam olishingiz va javob topishingiz mumkin."
+      },
+      "green": {
+        "title": "Xavfsiz va do‘stona muhit",
+        "text": "Biz platformada muloqotni qulay qilishga intilamiz. Bu erda siz o'zingiz bo'lishingiz va qo'rqmasdan fikr almashishingiz mumkin."
+      },
+      "pink": {
+        "title": "Eng yaxshi mentorlar",
+        "text": "Tajribali mutaxassislar murakkab mavzularni tushunishga va muhim imtihonlarga tayyorgarlik ko'rishga yordam beradi."
+      }
+    },
+    "how": {
+      "title": "O‘QISHDA AI'DAN QANDAY FOYDALANISH KERAK",
+      "steps": {
+        "1": { "title": "Savolni aniq ber", "text": "Savollarni tushunarli qilib ber." },
+        "2": { "title": "Tafsilotlarni aniqlashtir", "text": "Qo‘shimcha savollar ber." },
+        "3": { "title": "Javobdan o‘rgan", "text": "Bilimlarni amalda qo‘lla." },
+        "4": { "title": "Bilimni qo‘lla", "text": "Cognia rivojlanish vositasi." },
+        "5": { "title": "AI’dan to‘g‘ri foydalan", "text": "AI yordamchi, firibgarlik emas." }
+      },
+      "disclaimer": "AI o‘rganishga yordam beradi, lekin o‘rnini bosa olmaydi."
+    }
+  },
+
+  "footer": {
+      "quote": "O‘rgan. Muloqot qil. Rivojlan.",
+      "links": {
+        "ielts": "IELTS simulyatori",
+        "ai": "Cognia AI",
+        "account": "Mening akkauntim"
+      },
+      "rights": "© 2025 STUDENTCHAT MChJ. Barcha huquqlar himoyalangan.",
+      "contact": "contact@student-chat.online"
+   },
+
+   "AIchat": {
+      "sidebar": {
+        "title": "Chatlar",
+        "newChat": "Yangi chat"
+      },
+      
+      "welcome": {
+        "title": "Xush kelibsiz!",
+        "placeholder": "Biror narsa so‘rang..."
+      },
+
+      "input": {
+        "placeholder": "Xabar kiriting..."
+      },
+
+      "typing": "Yozmoqda..."
+    },
+
+    "leaderboard": {
+      "title": "LeaderBoard",
+
+      "tabs": {
+        "points": "Ballar",
+        "games": "Oyinlar"
+      },
+
+      "table": {
+        "rank": "O'rin",
+        "player": "O'yinchi",
+        "points": "Ballar",
+        "top": "Daraja"
+      },
+
+      "empty": {
+        "noPlayers": "LeaderBoardda hali o‘yinchilar yo‘q.",
+        "hint": "O'yin o'ynang va yuqoriga chiqish uchun ochko to'plang!"
+      },
+
+      "you": "Siz",
+      "gamesComingSoon": "Tez orada \"O'yinlar\" bo'limi paydo bo'ladi.",
+      "gamesHint": "Bu yerda individual o'yinlar uchun rekordlar ko'rsatiladi."
+    },
+
+    "wallet": {
+    "title": "Hamyon",
+    "loading": "Hamyon yuklanmoqda...",
+    "tabs": {
+      "balance": "Balans",
+      "transactions": "Tranzaksiyalar",
+      "stats": "Statistika"
+    },
+
+    "balance": {
+      "points": "Ball",
+      "earnPointsFrom": "Ball quyidagilardan olinadi:",
+      "earnPoints": {
+        "gameWin": "O‘yin g‘alabalari (+{{points}} ball)",
+        "achievement": "Yutuqlar (+{{points}} ball)"
+      },
+
+      "spendPointsSoon": "Ballarni do‘konda sarflash mumkin (tez orada)"
+    },
+
+    "transactions": {
+      "noTransactions": "Tranzaksiyalar yo‘q",
+      "emptyHint": "O‘yin o‘ynang yoki yutuqlarni qo‘lga kiriting, ball to‘plang!"
+    },
+
+    "transactionLabels": {
+      "gameWin": "O‘yin g‘alabasi",
+      "achievement": "Yutuq",
+      "shopPurchase": "Do‘kon xaridi",
+      "reward": "Mukofot"
+    },
+
+    "stats": {
+      "totalEarned": "Jami topilgan",
+      "totalSpent": "Jami sarflangan",
+      "gameWins": "O‘yin g‘alabalari",
+      "achievements": "Yutuqlar",
+      "totalTransactions": "Jami tranzaksiyalar",
+      "earnedPoints": "Topilgan: {{points}} ⭐️"
+    }
+  },
+
+  "achievements": {
+    "title": "Yutuqlar",
+
+    "filters": {
+      "all": "Hammasi",
+      "earned": "Olingan",
+      "points": "Ball"
+    },
+
+    "items": {
+      "firstStep": {
+        "title": "Birinchi qadam",
+        "description": "Birinchi topshiriqni bajaring"
+      },
+
+      "persistence": {
+        "title": "Matonat",
+        "description": "Ketma-ket 7 kun tizimga kiring"
+      },
+
+      "pro": {
+        "title": "Pro",
+        "description": "100 ball to‘plang"
+      }
+    }
+  },
+
+  "profile": {
+    "name": "Ism",
+    "email": "Email",
+    "menu": {
+      "leaderboard": "Liderlar jadvali",
+      "shop": "Do‘kon",
+      "games": "O‘yinlar",
+      "wallet": "Hamyon",
+      "achievements": "Yutuqlar",
+      "friends": "Do‘stlar va chat",
+      "logout": "Chiqish"
+    }
+  },
+
+  "chat": {
+    "tabs": {
+      "chats": "Chatlar",
+      "friends": "Do‘stlar"
+    },
+    "createRoom": {
+      "title": "Xonani yaratish",
+      "namePlaceholder": "Xona nomi",
+      "type": {
+        "channel": "Kanal",
+        "group": "Guruh",
+        "direct": "Shaxsiy chat"
+      },
+      "category": {
+        "all": "Hammasi ",
+        "subject": "Fan",
+        "university": "Universitet",
+        "country": "Mamlakat",
+        "interest": "Qiziqish"
+      },
+      "create": "Yaratish",
+      "cancel": "Bekor qilish"
+    },
+    "friends": {
+      "addFriend": "Do‘st qo‘shish",
+      "idOrUsername": "ID yoki foydalanuvchi nomi",
+      "sendRequest": "So‘rov yuborish",
+      "empty": "Sizda hali do‘stlar yo‘q",
+      "hint": "Chatni boshlash uchun do‘st qo‘shing",
+      "requestsEmpty": "Yangi so‘rovlar yo‘q",
+      "accept": "Qabul qilish",
+      "reject": "Rad etish",
+      "remove": "Do‘stdan olib tashlash",
+      "message": "Xabar yuborish",
+      "requests": "So‘rovlar"
+    },
+    "chatArea": {
+      "members": "a'zolar",
+      "noRoomSelected": "Chatni tanlang",
+      "noRoomSelectedHint": "Yangi xona yarating yoki mavjudini tanlang",
+      "noMessages": "Xabarlar yo‘q. Chatni boshlang!",
+      "messagePlaceholder": "Xabar yozing...",
+      "fileTooltip": "Fayl biriktirish",
+      "voiceTooltip": "Ovozli xabar"
+    },
+    "reactions": {
+      "you": "(siz)"
+    }
+  }
+}
+ 

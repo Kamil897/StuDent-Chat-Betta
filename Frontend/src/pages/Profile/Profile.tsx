@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import S from "./Profile.module.css";
 
 type User = {
@@ -7,10 +8,11 @@ type User = {
   surname: string;
   email: string;
   username: string;
-  avatarSeed: string; // ✅ добавили
+  avatarSeed: string;
 };
 
 export default function Profile() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
@@ -33,7 +35,6 @@ export default function Profile() {
 
   if (!user) return null;
 
-  // 🎯 СТАБИЛЬНЫЙ АВАТАР (тот же, что выдался при регистрации)
   const avatarUrl = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.avatarSeed}`;
 
   return (
@@ -41,22 +42,16 @@ export default function Profile() {
       <div className={S.container}>
         {/* Левая карточка */}
         <div className={S.profileCard}>
-          
-          {/* АВАТАР */}
-          <img
-            src={avatarUrl}
-            alt="avatar"
-            className={S.avatar}
-          />
+          <img src={avatarUrl} alt="avatar" className={S.avatar} />
 
           <h2>{user.name}</h2>
 
           <div className={S.info}>
             <p>
-              <strong>Имя:</strong> {user.name}
+              <strong>{t("profile.name")}:</strong> {user.name}
             </p>
             <p>
-              <strong>Email:</strong> {user.email}
+              <strong>{t("profile.email")}:</strong> {user.email}
             </p>
           </div>
         </div>
@@ -64,24 +59,24 @@ export default function Profile() {
         {/* Правая панель */}
         <div className={S.menuCard}>
           <ul className={S.menu}>
-            <li><a href="/Leaderboard">Leaderboard</a></li>
+            <li><a href="/Leaderboard">{t("profile.menu.leaderboard")}</a></li>
           </ul>
 
           <span className={S.line}></span>
 
           <ul className={S.menu}>
-            <li><a href="/Shop">Магазин</a></li>
-            <li><a href="/games">Игры</a></li>
-            <li><a href="/Wallet">Кошелёк</a></li>
-            <li><a href="/">Достижения</a></li>
-            <li><a href="/Chat">Друзья и чаты</a></li>
+            <li><a href="/Shop">{t("profile.menu.shop")}</a></li>
+            <li><a href="/games">{t("profile.menu.games")}</a></li>
+            <li><a href="/Wallet">{t("profile.menu.wallet")}</a></li>
+            <li><a href="/Achievements">{t("profile.menu.achievements")}</a></li>
+            <li><a href="/Chat">{t("profile.menu.friends")}</a></li>
           </ul>
 
           <span className={S.line}></span>
 
           <ul className={S.menu}>
             <li className={S.logout} onClick={handleLogout}>
-              Выйти из аккаунта
+              {t("profile.menu.logout")}
             </li>
           </ul>
         </div>

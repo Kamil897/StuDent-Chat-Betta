@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Bot, User } from "lucide-react";
 import s from "./AiChat.module.scss";
 import { createThread, sendMessageToAssistant, ASSISTANT_IDS } from "../../utils/openai";
+import { useTranslation } from "react-i18next";
 
 type Chat = {
   id: number;
@@ -19,7 +20,7 @@ const AiChat: React.FC = () => {
   const [chatList, setChatList] = useState<Chat[]>(() => {
     return JSON.parse(localStorage.getItem("chatList") || "[]");
   });
-
+  const { t } = useTranslation();
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
@@ -208,10 +209,10 @@ const AiChat: React.FC = () => {
     <div className={s.chatWrapper}>
       {/* Sidebar */}
       <div className={s.sidebar}>
-        <h2>Чаты</h2>
+        <h2>{t("AIchat.sidebar.title")}</h2>
 
         <button onClick={() => newChat()} className={s.newChat}>
-          + Новый чат
+          + {t("AIchat.sidebar.newChat")}
         </button>
 
         {chatList.map((chat) => (
@@ -232,12 +233,12 @@ const AiChat: React.FC = () => {
       {/* Приветственный экран если нет чатов */}
       {chatList.length === 0 ? (
         <div className={s.chatContainer}>
-          <h1 className={s.welcomeTitle}>Добро пожаловать!</h1>
+          <h1 className={s.welcomeTitle}>{t("AIchat.welcome.title")}</h1>
 
           <div className={s.welcomeInputWrapper}>
             <input
               type="text"
-              placeholder="Спросите что-нибудь..."
+              placeholder={t("AIchat.welcome.placeholder")}
               className={s.welcomeInput}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -290,7 +291,7 @@ const AiChat: React.FC = () => {
                 <div className={s.messageAvatar}>
                   <Bot size={20} />
                 </div>
-                <div className={s.messageContent}>Печатает...</div>
+                <div className={s.messageContent}>{t("AIchat.typing")}</div>
               </motion.div>
             )}
           </div>
@@ -303,7 +304,7 @@ const AiChat: React.FC = () => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Введите сообщение..."
+                placeholder={t("AIchat.input.placeholder")}
                 disabled={isLoading}
               />
 
