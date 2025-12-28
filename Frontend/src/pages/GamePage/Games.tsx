@@ -14,11 +14,16 @@ const Games: React.FC = () => {
 
 
   const gameCards: GameCard[] = [
-    { id: 'asteroid', title: 'asteroid', route: '/games/meteors' },
-    { id: 'pingpong', title: 'ping-pong', route: '/games/pingpong' },
+    { id: 'Asteroid', title: 'asteroid', route: '/games/meteors' },
+    { id: 'Pingpong', title: 'ping-pong', route: '/games/pingpong' },
     { id: 'TicTacToe', title: 'TicTacToe', route: '/games/don' },
     { id: 'MineSweeper', title: 'mineswepeer', route: '/games/minesweeper' },
     { id: 'ArenaShooter', title: 'arena', route: '/games/arenashooter' },
+    { id: 'TeleportingCubeGame', title: 'Cube', route: '/games/TeleportingCubeGame' },
+    { id: 'Tir', title: 'Tir', route: '/games/Tir' },
+    { id: 'Snake', title: 'Snake', route: '/games/Snake' },
+
+
   ];
 
   const categories = [

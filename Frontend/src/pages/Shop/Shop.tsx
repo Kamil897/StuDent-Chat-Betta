@@ -1,112 +1,78 @@
-import React, { useState } from 'react';
-import { Search } from 'lucide-react';
-import styles from './Shop.module.css';
-import PrivilegeCard from '../../Components/PrivilageCard/PrivilageCard';
+import React from "react";
+import s from "./Shop.module.scss";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-interface Privilege {
-  id: number;
-  title: string;
+/* =========================
+   TYPES покупка подписки ии
+========================= */
+
+interface Prefix {
+  id: string | number;
+  name: string;
   description: string;
-  price: number;
-  limit: string;
+  image: string;
 }
 
-const Shop: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('Все');
-  const [selectedPrivilege, setSelectedPrivilege] = useState<Privilege | null>(null);
+interface ShopProps {
+  prefix?: Prefix; // 👈 ВАЖНО
+  onBuy?: () => void;
+  disabled?: boolean;
+  isPurchased?: boolean;
+}
 
-  const privileges: Privilege[] = [
-    {
-      id: 1,
-      title: 'VIP',
-      description: 'Полный доступ к возможностям сервера',
-      price: 500,
-      limit: '30 дней',
-    },
-    {
-      id: 2,
-      title: 'Premium',
-      description: 'Расширенные возможности',
-      price: 300,
-      limit: '30 дней',
-    },
-  ];
+/* =========================
+   COMPONENT
+========================= */
 
-  const filters = ['Все', 'Достигнуто (0)', 'Недоступно (0)', 'In demands(1)'];
+const Shop: React.FC<ShopProps> = ({
+  prefix,
+  onBuy,
+  disabled = false,
+  isPurchased = false,
+}) => {
+  const { t } = useTranslation();
 
-  // 👉 IF PRODUCT IS SELECTED — SHOW PRODUCT PAGE
-  if (selectedPrivilege) {
+  // 🛑 ЕСЛИ НЕТ ДАННЫХ — НЕ РЕНДЕРИМ
+  if (!prefix) {
     return (
-      <PrivilegeCard
-        title={selectedPrivilege.title}
-        description={selectedPrivilege.description}
-        limit={selectedPrivilege.limit}
-        price={selectedPrivilege.price}
-        onBuy={() => alert('Покупка...')}
-        onBack={() => setSelectedPrivilege(null)}
-      />
+      <div className={s.prefixCard}>
+        <p style={{ color: "#aaa", textAlign: "center" }}>
+          Product not found
+        </p>
+      </div>
     );
   }
 
-  // 👉 OTHERWISE SHOW STORE
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Магазин привілегій</h1>
+    <div className={s.prefixCard}>
+      <div className={s.cardHeader}>
+        <img
+          src={prefix.image}
+          alt={t(prefix.name)}
+          className={s.cardPhoto}
+        />
+        <h2>{t(prefix.name)}</h2>
+        <p>{t(prefix.description)}</p>
+      </div>
 
-          <div className={styles.balance}>
-            <span>Баланс</span>
-            <span>500 ОХО</span>
-          </div>
-        </div>
+      <div className={s.cardBody}>
+        <button
+          className={s.buyButton}
+          disabled={disabled}
+          onClick={onBuy}
+        >
+          {isPurchased ? t("shop_2.purchasedLabel") : t("shop_2.buy")}
+        </button>
 
-        <div className={styles.searchBlock}>
-          <div className={styles.searchWrapper}>
-            <Search size={20} />
-            <input
-              placeholder="Поиск привилегий"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <div className={styles.filters}>
-            {filters.map((filter) => (
-              <button
-                key={filter}
-                className={activeFilter === filter ? styles.activeFilter : ''}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          {privileges.map((privilege) => (
-            <div
-              key={privilege.id}
-              className={styles.card}
-              onClick={() => setSelectedPrivilege(privilege)}
-            >
-              <div className={styles.imagePlaceholder}>Image</div>
-
-              <div className={styles.cardContent}>
-                <button className={styles.buyButton}>
-                  {privilege.title}
-                </button>
-                <p>{privilege.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Link to={`/product/${prefix.id}`} className={s.noUnderline}>
+          <button className={s.buyButtonExtra}>
+            {t("shop_2.details")}
+          </button>
+        </Link>
       </div>
     </div>
   );
 };
 
 export default Shop;
-

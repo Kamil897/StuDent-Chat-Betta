@@ -25,6 +25,10 @@ import Achievements from './pages/Achievements/Achievements'
 import News from './pages/News/News'
 import { NewsDetailPage } from './pages/News/NewsDetailPage'
 import ArenaShooter from './Components/Arena/ArenaShooter'
+import TeleportingCubeGame from './Components/TeleportingCube/TeleportingCubeGame'
+import Magaz from './pages/Magaz/Magaz'
+import Tir from './Components/Tir/Tir'
+import SnakeGame from './Components/Snake/Snake'
 
 function App() {
   return (
@@ -52,7 +56,11 @@ function App() {
         <Route path='/Friends' element={<ChatComponent/>}/>
         <Route path='/Wallet' element={<Wallet/>}/>
         <Route path='/Achievements' element={<Achievements/>}/>
+        <Route path='/Magaz' element={<Magaz/>}/>
         <Route path='/games/ArenaShooter' element={<ArenaShooter/>}/>
+        <Route path='/games/Tir' element={<Tir/>}/>
+        <Route path='/games/Snake' element={<SnakeGame/>}/>
+        <Route path='/games/TeleportingCubeGame' element={<TeleportingCubeGame/>}/>
       </Routes>
       <PointsNotification />
       <Footer />

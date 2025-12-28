@@ -1,0 +1,101 @@
+/* Стили для карточки префикса */
+.prefixCard {
+  position: relative;
+  overflow: hidden;
+  height: 24rem; /* Высота карточки */
+  border-radius: 0.75rem; /* Скругление углов */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+  transition: transform 0.3s ease; /* Плавное увеличение при наведении */
+}
+
+.prefixCard:hover {
+  transform: scale(1.05); /* Увеличение карточки при наведении */
+}
+
+.cardHeader {
+  position: relative;
+  overflow: hidden;
+  height: 60%; /* Высота заголовка */
+}
+
+.cardPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Заполнение картинки */
+  transition: transform 0.3s ease;
+}
+
+.cardHeader h3 {
+  font-size: 1.25rem; /* Размер шрифта для заголовка */
+  font-weight: bold;
+  margin-top: 1rem; /* Отступ сверху */
+  color: #1f2937; /* Цвет текста */
+}
+
+.cardHeader p {
+  font-size: 1rem;
+  color: #6b7280; /* Цвет текста */
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.cardBody {
+  padding: 1rem; /* Отступы внутри тела карточки */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.buyButtonExtra {
+  cursor: pointer;
+  padding: 0.75rem 0.9rem; /* Отступы для кнопки */
+  border: 2px solid #f87171; /* Рамка кнопки */
+  background-color: transparent;
+  color: #f87171; /* Цвет текста */
+  text-align: center;
+  font-weight: normal;
+  border-radius: 0.375rem; /* Скругление углов кнопки */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0 35%;
+}
+
+.buyButton {
+  cursor: pointer;
+  padding: 0.75rem 0.9rem; /* Отступы для кнопки */
+  border: 2px solid #f87171; /* Рамка кнопки */
+  background-color: transparent;
+  color: #f87171; /* Цвет текста */
+  text-align: center;
+  font-weight: normal;
+  border-radius: 0.375rem; /* Скругление углов кнопки */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-bottom: 1rem; /* Отступ снизу */
+}
+
+.buyButton:hover {
+  background-color: #f87171; /* Цвет фона при наведении */
+  color: white; /* Цвет текста при наведении */
+}
+
+.buyButton:disabled {
+  cursor: not-allowed;
+  background-color: #e5e7eb; /* Цвет для неактивной кнопки */
+  color: #6b7280;
+  border-color: #e5e7eb;
+}
+
+.buyButton:disabled:hover {
+  background-color: #6b7280; /* Цвет для неактивной кнопки */
+  color: #34373d;
+  border-color: #e5e7eb;
+}
+
+.noUnderline {
+  text-decoration: none;
+}
+
+.svgIcon {
+  fill: currentColor;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}

@@ -1,0 +1,388 @@
+/* Main container */
+.app {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Menu styles */
+  .menu {
+    background: rgba(30, 41, 59, 0.9);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+  
+  .menuHeader {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .menuTitle {
+    font-size: 3rem;
+    font-weight: bold;
+    background: linear-gradient(to right, #34d399, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  
+  .menuSubtitle {
+    color: #94a3b8;
+    font-size: 1rem;
+  }
+  
+  /* Game over box */
+  .gameOverBox {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: linear-gradient(to right, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+  
+  .gameOverText {
+    text-align: center;
+    color: white;
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  
+  .gameOverStats {
+    display: flex;
+    justify-content: space-between;
+    color: #cbd5e1;
+  }
+  
+  /* Difficulty section */
+  .difficultySection {
+    margin-bottom: 24px;
+  }
+  
+  .difficultyLabel {
+    display: block;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .difficultyButtons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .difficultyButton {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: #475569;
+    color: #cbd5e1;
+    transition: background-color 0.2s;
+  }
+  
+  .difficultyButton:hover {
+    background: #334155;
+  }
+  
+  .difficultyButtonActive {
+    background: linear-gradient(to right, #10b981, #059669);
+    color: white;
+  }
+  
+  /* Start button */
+  .startButton {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(to right, #10b981, #059669);
+    color: white;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.125rem;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: opacity 0.2s;
+  }
+  
+  .startButton:hover {
+    opacity: 0.9;
+  }
+  
+  /* Instructions */
+  .instructions {
+    background: rgba(51, 65, 85, 0.5);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 0.875rem;
+    color: #cbd5e1;
+  }
+  
+  .instructionsTitle {
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  .instructionsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .instructionsList li {
+    margin-bottom: 4px;
+  }
+  
+  /* Game container */
+  .gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  /* Info bar */
+  .infoBar {
+    width: 100%;
+    background: rgba(30, 41, 59, 0.9);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+  
+  .statsContainer {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .stat {
+    text-align: left;
+  }
+  
+  .statLabel {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+  
+  .statValue {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .statScore {
+    color: #34d399;
+  }
+  
+  .statTime {
+    color: #a78bfa;
+  }
+  
+  .statBest {
+    color: #fbbf24;
+  }
+  
+  .gameButtons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .pauseButton {
+    padding: 8px 16px;
+    background: #eab308;
+    color: #1e293b;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .pauseButton:hover {
+    background: #ca8a04;
+  }
+  
+  .exitButton {
+    padding: 8px 16px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .exitButton:hover {
+    background: #dc2626;
+  }
+  
+  /* Board */
+  .boardWrapper {
+    position: relative;
+  }
+  
+  .board {
+    position: relative;
+    background: #0a192f;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 4px solid #ef4444;
+  }
+  
+  /* Snake */
+  .snake {
+    position: absolute;
+    background: #10b981;
+    border-radius: 2px;
+  }
+  
+  .snakeHead {
+    background: #34d399;
+  }
+  
+  /* Food */
+  .food {
+    position: absolute;
+    background: #ef4444;
+    border-radius: 50%;
+  }
+  
+  /* Pause overlay */
+  .pauseOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 25, 47, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .pauseContent {
+    text-align: center;
+  }
+  
+  .pauseTitle {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 8px;
+  }
+  
+  .pauseText {
+    color: #cbd5e1;
+  }
+  
+  /* Mobile controls */
+  .mobileControls {
+    display: none;
+  }
+  
+  .controlPad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .horizontalControls {
+    display: flex;
+    gap: 48px;
+    align-items: center;
+  }
+  
+  .directionButton {
+    width: 64px;
+    height: 64px;
+    background: #475569;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+  }
+  
+  .directionButton:hover:not(:disabled) {
+    background: #334155;
+  }
+  
+  .directionButton:active:not(:disabled) {
+    background: #1e293b;
+  }
+  
+  .directionButton:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  
+  /* Mobile styles */
+  @media (max-width: 768px) {
+    .mobileControls {
+      display: block;
+    }
+  
+    .infoBar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  
+    .gameButtons {
+      width: 100%;
+    }
+  
+    .pauseButton,
+    .exitButton {
+      flex: 1;
+    }
+  
+    .menu {
+      padding: 24px;
+    }
+  
+    .menuTitle {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .directionButton {
+      width: 56px;
+      height: 56px;
+      font-size: 1.25rem;
+    }
+  
+    .horizontalControls {
+      gap: 40px;
+    }
+  
+    .statsContainer {
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  
+    .statValue {
+      font-size: 1.25rem;
+    }
+  }
