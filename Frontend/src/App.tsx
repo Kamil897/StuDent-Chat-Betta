@@ -24,6 +24,7 @@ import PointsNotification from './Components/PointsNotification/PointsNotificati
 import Achievements from './pages/Achievements/Achievements'
 import News from './pages/News/News'
 import { NewsDetailPage } from './pages/News/NewsDetailPage'
+import ArenaShooter from './Components/Arena/ArenaShooter'
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
         <Route path='/Friends' element={<ChatComponent/>}/>
         <Route path='/Wallet' element={<Wallet/>}/>
         <Route path='/Achievements' element={<Achievements/>}/>
+        <Route path='/games/ArenaShooter' element={<ArenaShooter/>}/>
       </Routes>
       <PointsNotification />
       <Footer />

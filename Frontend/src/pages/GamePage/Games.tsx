@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import styles from './Games.module.scss';
 
 interface GameCard {
@@ -18,7 +17,8 @@ const Games: React.FC = () => {
     { id: 'asteroid', title: 'asteroid', route: '/games/meteors' },
     { id: 'pingpong', title: 'ping-pong', route: '/games/pingpong' },
     { id: 'TicTacToe', title: 'TicTacToe', route: '/games/don' },
-    { id: 'MineSweeper', title: 'snake', route: '/games/minesweeper' },
+    { id: 'MineSweeper', title: 'mineswepeer', route: '/games/minesweeper' },
+    { id: 'ArenaShooter', title: 'arena', route: '/games/arenashooter' },
   ];
 
   const categories = [
