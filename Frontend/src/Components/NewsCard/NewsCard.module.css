@@ -1,0 +1,43 @@
+.card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===== ОБЩАЯ КАРТОЧКА ===== */
+.image {
+  background: #ddd;
+  border-radius: 6px;
+}
+
+/* ===== WORLD ===== */
+.world .image {
+  height: 140px;
+  margin-bottom: 8px;
+}
+
+.world h3 {
+  font-size: 16px;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  display: flex;
+  gap: 12px;
+}
+
+.sidebar .image {
+  width: 120px;
+  height: 90px;
+  flex-shrink: 0;
+}
+
+.sidebar h3 {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.sidebar p {
+  font-size: 14px;
+  color: #666;
+}

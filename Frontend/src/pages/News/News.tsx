@@ -1,13 +1,42 @@
-import React from 'react';
-import NewsHero from '../../Components/NewsHero/NewsHero';
+import styles from './News.module.css';
+import { news } from './data';
+import { NewsSection } from '../../Components/NewsSection/NewsSection';
 
-const News: React.FC = () => {
+const News = () => {
   return (
-    <>
-    <NewsHero />
-    </>
-  )
-}
+    <main className={styles.page}>
+      {/* ЛЕВАЯ КОЛОНКА */}
+      <div className={styles.main}>
+        <NewsSection
+          title="Мир"
+          items={news.filter(n => n.category === 'world')}
+          variant="world"
+        />
 
-export default News
+        <NewsSection
+          title="Student-chat"
+          items={news.filter(n => n.category === 'student')}
+          variant="student"
+        />
+      </div>
 
+      {/* ПРАВАЯ КОЛОНКА */}
+      <aside className={styles.sidebar}>
+      <NewsSection
+        title="Бизнес"
+        items={news.filter(n => n.category === 'business')}
+        variant="sidebar"
+      />
+
+      <NewsSection
+        title="Искусство"
+        items={news.filter(n => n.category === 'art')}
+        variant="sidebar"
+      />
+
+      </aside>
+    </main>
+  );
+};
+
+export default News;

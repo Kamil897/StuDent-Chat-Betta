@@ -1,0 +1,57 @@
+/* ===== ОБЩЕЕ ===== */
+.section {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ===== МИР ===== */
+.worldSection {
+  max-height: 700px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebarGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== ЛЕНТА ===== */
+.feed {
+  margin-top: 16px;
+  list-style: none;
+  padding: 0;
+}
+
+.feedItem {
+  padding: 12px 0;
+  border-top: 1px solid #eee;
+}
+
+.feedLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.feedLink h4 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.feedLink p {
+  font-size: 14px;
+  color: #666;
+}

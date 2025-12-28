@@ -46,7 +46,7 @@ export default function Header() {
         <Link to="/">{t("nav.home")}</Link>
         <Link to="/AiChat">{t("nav.ai")}</Link>
         <Link to="/AISimulation">{t("nav.trai")}</Link>
-        <Link to="/News">{t("nav.news")}</Link>
+        <Link to="/news">{t("nav.news")}</Link>
       </nav>
 
       <div className={S.right}>

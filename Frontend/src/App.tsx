@@ -21,8 +21,9 @@ import ChatComponent from './Components/ChatBox/Chat'
 import Leaderboard from './pages/LeaderBoard/LeaderBoard'
 import Wallet from './pages/Wallet/Wallet'
 import PointsNotification from './Components/PointsNotification/PointsNotification'
-import News from './pages/News/News'
 import Achievements from './pages/Achievements/Achievements'
+import News from './pages/News/News'
+import { NewsDetailPage } from './pages/News/NewsDetailPage'
 
 function App() {
   return (
@@ -34,8 +35,9 @@ function App() {
         <Route path='/register' element={<Register/>}/>
         <Route path='/AiChat' element={<AiChat/>}/>
         <Route path='/AISimulation' element={<AISimulation/>}/>
-        <Route path='/News' element={<News/>}/>
         <Route path="/profile" element={<Profile />} />
+        <Route path="/news" element={<News/>} />
+        <Route path="/news/:id" element={<NewsDetailPage />} />
         <Route path='/games' element={<Games/>}/>
         <Route path='/games/meteors' element={<Doom/>}/>
         <Route path='/games/Don'element={<Don/>}/>
