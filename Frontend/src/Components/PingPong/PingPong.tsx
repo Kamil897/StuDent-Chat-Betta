@@ -348,7 +348,7 @@ const handleButtonUp = (direction: Direction): void => {
           </button>
 
           <button className={styles["back-button"]} onClick={() => navigate('/Games')}>
-            {('space.back')}
+            Back
           </button>
         </>
       )}

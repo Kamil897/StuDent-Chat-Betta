@@ -12,6 +12,9 @@ interface Prefix {
   name: string;
   description: string;
   image: string;
+  price?: number;
+  currency?: string;
+  type?: string;
 }
 
 interface ShopProps {
@@ -57,19 +60,34 @@ const Shop: React.FC<ShopProps> = ({
       </div>
 
       <div className={s.cardBody}>
+        {prefix.price !== undefined && (
+          <div className={s.priceDisplay}>
+            {prefix.currency ? (
+              <span className={s.realMoneyPrice}>
+                {prefix.price} {prefix.currency}
+              </span>
+            ) : (
+              <span className={s.pointsPrice}>
+                {prefix.price === 0 ? "Бесплатно" : `${prefix.price} баллов`}
+              </span>
+            )}
+          </div>
+        )}
         <button
           className={s.buyButton}
           disabled={disabled}
           onClick={onBuy}
         >
-          {isPurchased ? t("shop_2.purchasedLabel") : t("shop_2.buy")}
+          {isPurchased ? t("shop_2.purchasedLabel") : prefix.type === "subscription" ? "Купить подписку" : t("shop_2.buy")}
         </button>
 
-        <Link to={`/product/${prefix.id}`} className={s.noUnderline}>
-          <button className={s.buyButtonExtra}>
-            {t("shop_2.details")}
-          </button>
-        </Link>
+        {prefix.type !== "subscription" && (
+          <Link to={`/product/${prefix.id}`} className={s.noUnderline}>
+            <button className={s.buyButtonExtra}>
+              {t("shop_2.details")}
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );

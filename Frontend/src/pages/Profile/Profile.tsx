@@ -65,7 +65,7 @@ export default function Profile() {
           <span className={S.line}></span>
 
           <ul className={S.menu}>
-            <li><a href="/Shop">{t("profile.menu.shop")}</a></li>
+            <li><a href="/Magaz">{t("profile.menu.shop")}</a></li>
             <li><a href="/games">{t("profile.menu.games")}</a></li>
             <li><a href="/Wallet">{t("profile.menu.wallet")}</a></li>
             <li><a href="/Achievements">{t("profile.menu.achievements")}</a></li>

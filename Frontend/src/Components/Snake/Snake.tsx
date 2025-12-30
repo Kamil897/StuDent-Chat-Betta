@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import s from './Snake.module.scss'; // SCSS стили остаются
+import s from './Snake.module.scss';
+import { handleGameWin } from '../../utils/gameRewards';
 
 const TILE_SIZE = 20;
 const ROWS = 20;
@@ -22,7 +23,16 @@ function SnakeGame() {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [difficulty, setDifficulty] = useState('medium');
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
+  
+  const getGameSpeed = () => {
+    switch (difficulty) {
+      case 'easy': return 200;
+      case 'medium': return 150;
+      case 'hard': return 100;
+      default: return 150;
+    }
+  };
   const [bestScore, setBestScore] = useState(() => {
     return parseInt(localStorage.getItem('snakeBestScore') || '0');
   });
@@ -86,7 +96,8 @@ function SnakeGame() {
         return newSnake;
       });
     };
-    gameLoopRef.current = window.setInterval(moveSnake,);
+    const speed = getGameSpeed();
+    gameLoopRef.current = window.setInterval(moveSnake, speed);
     return () => clearInterval(gameLoopRef.current!);
   }, [isGameStarted, isGameOver, isPaused, difficulty, food]);
 
@@ -112,6 +123,10 @@ function SnakeGame() {
     if (score > bestScore) {
       setBestScore(score);
       localStorage.setItem('snakeBestScore', score.toString());
+    }
+    // Award points based on score
+    if (score >= 10) {
+      handleGameWin("Snake");
     }
   };
 
@@ -166,7 +181,7 @@ function SnakeGame() {
           {isGameOver && <p>Game Over! Score: {score}, Best: {bestScore}</p>}
           <div>
             <label>Difficulty:</label>
-            {['easy','medium','hard'].map((level) => (
+            {(['easy','medium','hard'] as const).map((level) => (
               <button key={level} onClick={() => setDifficulty(level)}>{level}</button>
             ))}
           </div>

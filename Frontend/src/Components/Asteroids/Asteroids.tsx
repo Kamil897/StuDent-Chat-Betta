@@ -224,17 +224,20 @@ const Doom: React.FC = () => {
           if (Math.hypot(b.x - a.x, b.y - a.y) < a.size) {
             bulletsRef.current.splice(bi, 1);
             asteroidsRef.current.splice(ai, 1);
-            const newScore = gameState.score + 10;
-            setGameState(prev => ({ ...prev, score: newScore }));
-            
-            // Check if all asteroids are destroyed (win condition)
-            // Check after removing the asteroid
-            if (asteroidsRef.current.length === 0 && !gameState.gameOver) {
-              // All asteroids destroyed - player wins!
-              handleGameWin("Asteroids");
-              setGameState(prev => ({ ...prev, gameOver: true }));
-              break;
-            }
+            setGameState(prev => {
+              const newScore = prev.score + 10;
+              const newState = { ...prev, score: newScore };
+              
+              // Check if all asteroids are destroyed (win condition)
+              // Check after removing the asteroid
+              if (asteroidsRef.current.length === 0 && !prev.gameOver) {
+                // All asteroids destroyed - player wins!
+                handleGameWin("Asteroids");
+                return { ...newState, gameOver: true };
+              }
+              
+              return newState;
+            });
             break; // Bullet hit an asteroid, no need to check other asteroids
           }
         }

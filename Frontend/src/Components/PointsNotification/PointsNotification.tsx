@@ -70,3 +70,5 @@ const PointsNotification: React.FC = () => {
 
 export default PointsNotification;
 
+
+

@@ -17,14 +17,15 @@ import {
 } from "../../utils/chatStorage";
 import {
   getFriends,
-  getFriendRequests,
+  getMyFriendRequests,
   acceptFriendRequest,
   rejectFriendRequest,
-  sendFriendRequest,
+  sendFriendRequestByName,
   removeFriend,
   type Friend,
   type FriendRequest,
 } from "../../utils/friendsStorage";
+import { searchUsers, type SearchableUser } from "../../utils/userSearch";
 import { Mic, Paperclip, Smile, Send, Plus, Hash, Users, UserPlus, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -43,7 +44,9 @@ const ChatComponent: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<ChannelCategory | "all">("all");
   const [showReactions, setShowReactions] = useState<string | null>(null);
   const [friendsTab, setFriendsTab] = useState<"friends" | "requests">("friends");
-  const [newFriendId, setNewFriendId] = useState("");
+  const [newFriendName, setNewFriendName] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchableUser[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   const currentUser = getCurrentUser();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -81,7 +84,8 @@ const ChatComponent: React.FC = () => {
   };
 
   const loadFriendRequests = () => {
-    const loadedRequests = getFriendRequests();
+    // Load only requests for current user
+    const loadedRequests = getMyFriendRequests();
     setFriendRequests(loadedRequests);
   };
 
@@ -215,11 +219,16 @@ const ChatComponent: React.FC = () => {
     if (!currentUser) return;
 
     // Find or create direct chat with friend
+    // Check by member IDs
     let directRoom = rooms.find(
-      (r) => r.type === "direct" && r.members.includes(friend.id)
+      (r) => r.type === "direct" && 
+      r.members.includes(friend.id) && 
+      r.members.includes(currentUser.id) &&
+      r.members.length === 2
     );
 
     if (!directRoom) {
+      // Create new direct chat room
       directRoom = createChatRoom(friend.name, "direct");
       directRoom.members = [currentUser.id, friend.id];
       const updatedRooms = [...rooms, directRoom];
@@ -229,35 +238,75 @@ const ChatComponent: React.FC = () => {
 
     setSelectedRoomId(directRoom.id);
     setSidebarTab("chats");
+    loadMessages(directRoom.id);
   };
 
-  const handleAddFriend = () => {
-    if (!newFriendId.trim()) return;
-    sendFriendRequest(newFriendId, `User ${newFriendId}`);
-    alert(`Заявка пользователю ${newFriendId} отправлена`);
-    setNewFriendId("");
-    loadFriendRequests();
+  const handleSearchFriend = (query: string) => {
+    setNewFriendName(query);
+    if (query.trim().length >= 2) {
+      const results = searchUsers(query);
+      setSearchResults(results);
+      setShowSearchResults(true);
+    } else {
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
   };
 
-  const handleAcceptRequest = (requestId: string) => {
-    const friend = acceptFriendRequest(requestId);
+  const handleSelectFriend = (user: SearchableUser) => {
+    setNewFriendName(user.name || user.username);
+    setShowSearchResults(false);
+    setSearchResults([]);
+  };
+
+  const handleAddFriend = async () => {
+    if (!newFriendName.trim()) return;
+    
+    const result = await sendFriendRequestByName(newFriendName);
+    if (result) {
+      showNotification(`Заявка пользователю "${newFriendName}" отправлена!`, "success");
+      setNewFriendName("");
+      setSearchResults([]);
+      setShowSearchResults(false);
+      loadFriendRequests();
+    } else {
+      showNotification(`Пользователь "${newFriendName}" не найден или заявка уже существует`, "error");
+    }
+  };
+  
+  const showNotification = (message: string, _type: "success" | "error") => {
+    // Simple notification - can be improved with a toast library
+    alert(message);
+  };
+
+  const handleAcceptRequest = async (requestId: string) => {
+    const friend = await acceptFriendRequest(requestId);
     if (friend) {
       loadFriends();
       loadFriendRequests();
+      showNotification(`Вы приняли заявку от "${friend.name}"!`, "success");
       // Create direct chat room with new friend
       handleStartChatWithFriend(friend);
     }
   };
 
   const handleRejectRequest = (requestId: string) => {
+    const request = friendRequests.find(r => r.id === requestId);
     rejectFriendRequest(requestId);
     loadFriendRequests();
+    if (request) {
+      showNotification(`Заявка от "${request.fromUserName}" отклонена`, "error");
+    }
   };
 
   const handleRemoveFriend = (friendId: string) => {
-    if (!confirm("Удалить из друзей?")) return;
+    const friend = friends.find(f => f.id === friendId);
+    if (!confirm(`Удалить "${friend?.name || 'друга'}" из друзей?`)) return;
     removeFriend(friendId);
     loadFriends();
+    if (friend) {
+      showNotification(`"${friend.name}" удален из друзей`, "error");
+    }
   };
 
   const filteredRooms = rooms.filter((room) => {
@@ -416,19 +465,59 @@ const ChatComponent: React.FC = () => {
 
             {showCreateRoom && (
               <div className={styles.createRoomForm}>
-                <input
-                  type="text"
-                  placeholder={t("chat.friends.idOrUsername")}
-                  value={newFriendId}
-                  onChange={(e) => setNewFriendId(e.target.value)}
-                  className={styles.input}
-                />
+                <div className={styles.searchContainer}>
+                  <input
+                    type="text"
+                    placeholder="Введите имя или username пользователя"
+                    value={newFriendName}
+                    onChange={(e) => handleSearchFriend(e.target.value)}
+                    onFocus={() => {
+                      if (newFriendName.trim().length >= 2) {
+                        setShowSearchResults(true);
+                      }
+                    }}
+                    className={styles.input}
+                  />
+                  {showSearchResults && searchResults.length > 0 && (
+                    <div className={styles.searchResults}>
+                      {searchResults.map((user) => (
+                        <div
+                          key={user.id}
+                          className={styles.searchResultItem}
+                          onClick={() => handleSelectFriend(user)}
+                        >
+                          <div className={styles.searchResultAvatar}>
+                            {user.avatarSeed ? (
+                              <img
+                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.avatarSeed}`}
+                                alt={user.name}
+                              />
+                            ) : (
+                              <div className={styles.avatarPlaceholder}>
+                                {user.name[0]?.toUpperCase() || user.username[0]?.toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <div className={styles.searchResultInfo}>
+                            <div className={styles.searchResultName}>{user.name}</div>
+                            <div className={styles.searchResultUsername}>@{user.username}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <div className={styles.createRoomActions}>
                   <button onClick={handleAddFriend} className={styles.createButton}>
-                  {t("chat.friends.sendRequest")}
+                    {t("chat.friends.sendRequest")}
                   </button>
                   <button
-                    onClick={() => setShowCreateRoom(false)}
+                    onClick={() => {
+                      setShowCreateRoom(false);
+                      setNewFriendName("");
+                      setSearchResults([]);
+                      setShowSearchResults(false);
+                    }}
                     className={styles.cancelButton}
                   >
                     {t("chat.createRoom.cancel")}
@@ -523,6 +612,9 @@ const ChatComponent: React.FC = () => {
                       <div className={styles.friendInfo}>
                         <div className={styles.friendName}>{request.fromUserName}</div>
                         <div className={styles.friendEmail}>{request.fromUserId}</div>
+                        <div className={styles.requestDate}>
+                          {new Date(request.createdAt).toLocaleDateString("ru-RU")}
+                        </div>
                       </div>
                       <div className={styles.friendActions}>
                         <button

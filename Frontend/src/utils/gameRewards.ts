@@ -7,7 +7,11 @@ export function handleGameWin(gameName: string): void {
     "Asteroids": 10,
     "Minesweeper": 15,
     "Ping Pong": 10,
-    "TicTacToe": 5,
+    "Rock Paper Scissors": 5,
+    "Snake": 8,
+    "Tir": 10,
+    "Arena Shooter": 15,
+    "Teleporting Cube": 8,
   };
 
   const points = pointsMap[gameName] || 5;

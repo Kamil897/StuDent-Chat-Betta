@@ -404,3 +404,143 @@ $transition: all 0.2s ease;
     align-items: flex-start;
   }
 }
+
+// Payment Modal
+.paymentModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.paymentModalContent {
+  background: $white;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  
+  h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: $secondary;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition;
+  
+  &:hover {
+    color: $primary;
+  }
+}
+
+.planInfo {
+  margin-bottom: 2rem;
+  
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  p {
+    color: $secondary;
+    margin: 0 0 1rem 0;
+  }
+  
+  .price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 1rem 0;
+  }
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  
+  li {
+    padding: 0.5rem 0;
+    color: $secondary;
+  }
+}
+
+.paymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.paymentButton {
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: $white;
+  border: none;
+  border-radius: $radius;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.paymentNote {
+  font-size: 0.85rem;
+  color: $secondary;
+  text-align: center;
+  margin: 1rem 0 0 0;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .paymentModalContent {
+    padding: 1.5rem;
+  }
+  
+  .paymentModalContent h2 {
+    font-size: 1.5rem;
+  }
+  
+  .planInfo .price {
+    font-size: 1.5rem;
+  }
+}

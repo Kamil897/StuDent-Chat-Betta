@@ -13,12 +13,15 @@ const News = () => {
           variant="world"
         />
 
+        <span className={styles.line}></span>
+
         <NewsSection
           title="Student-chat"
           items={news.filter(n => n.category === 'student')}
           variant="student"
         />
       </div>
+
 
       {/* ПРАВАЯ КОЛОНКА */}
       <aside className={styles.sidebar}>
@@ -27,6 +30,8 @@ const News = () => {
         items={news.filter(n => n.category === 'business')}
         variant="sidebar"
       />
+
+      <span className={styles.line}></span>
 
       <NewsSection
         title="Искусство"
@@ -40,3 +45,5 @@ const News = () => {
 };
 
 export default News;
+
+

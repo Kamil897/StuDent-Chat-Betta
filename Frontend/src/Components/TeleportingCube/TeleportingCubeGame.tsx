@@ -1,11 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
+import styles from "./TeleportingCube.module.css";
+import { handleGameWin } from '../../utils/gameRewards';
+
+type GameMode = "single" | "multiplayer";
 
 export default function TeleportingCubeGameApp() {
+  const [gameMode, setGameMode] = useState<GameMode>("single");
+  const [currentPlayer, setCurrentPlayer] = useState<1 | 2>(1);
+  const [player1Score, setPlayer1Score] = useState(0);
+  const [player2Score, setPlayer2Score] = useState(0);
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [speedText, setSpeedText] = useState("1x");
-  const [cubeSkin, setCubeSkin] = useState("default");
-  const [bombSkin, setBombSkin] = useState("default");
+  const [cubeSkin] = useState("default");
+  const [bombSkin] = useState("default");
+  const [isGameActive, setIsGameActive] = useState(true);
   const [achievementsUnlocked, setAchievementsUnlocked] = useState<string[]>(() => {
     try {
       return JSON.parse(localStorage.getItem("achievementsUnlocked") || "[]");
@@ -29,7 +38,14 @@ export default function TeleportingCubeGameApp() {
   const maxScoreRef = useRef<number>(
     parseInt(localStorage.getItem("maxScore") || "0", 10)
   );
-  const maxScoreValueRef = useRef<HTMLDivElement | null>(null);
+  const player1MaxScoreRef = useRef<number>(
+    parseInt(localStorage.getItem("player1MaxScore") || "0", 10)
+  );
+  const player2MaxScoreRef = useRef<number>(
+    parseInt(localStorage.getItem("player2MaxScore") || "0", 10)
+  );
+  const gameTimeRef = useRef<number>(60); // 60 секунд на раунд
+  const [timeLeft, setTimeLeft] = useState(gameTimeRef.current);
 
   /* =========================
      ACHIEVEMENTS (FRONT ONLY)
@@ -100,12 +116,88 @@ export default function TeleportingCubeGameApp() {
   };
 
   useEffect(() => {
-    if (score > maxScoreRef.current) {
-      maxScoreRef.current = score;
-      saveMaxScore(score);
+    if (gameMode === "single") {
+      if (score > maxScoreRef.current) {
+        maxScoreRef.current = score;
+        saveMaxScore(score);
+      }
+      // Award points for milestones
+      if (score === 10 || score === 25 || score === 50) {
+        handleGameWin("Teleporting Cube");
+      }
+    } else {
+      if (currentPlayer === 1 && score > player1MaxScoreRef.current) {
+        player1MaxScoreRef.current = score;
+        localStorage.setItem("player1MaxScore", String(score));
+      }
+      if (currentPlayer === 2 && score > player2MaxScoreRef.current) {
+        player2MaxScoreRef.current = score;
+        localStorage.setItem("player2MaxScore", String(score));
+      }
     }
     checkAchievements();
-  }, [score, level, speedText]);
+  }, [score, level, speedText, gameMode, currentPlayer]);
+
+  const endPlayerRoundRef = useRef<(() => void) | null>(null);
+
+  const endPlayerRound = () => {
+    setIsGameActive(false);
+    if (currentPlayer === 1) {
+      setPlayer1Score(score);
+      // Переключаем на игрока 2
+      setTimeout(() => {
+        setCurrentPlayer(2);
+        setScore(0);
+        setLevel(1);
+        setSpeedText("1x");
+        currentSpeedRef.current = baseSpeedRef.current;
+        setTimeLeft(gameTimeRef.current);
+        setIsGameActive(true);
+        setMode();
+        positionCube();
+        startTeleportTimer();
+      }, 2000);
+    } else {
+      setPlayer2Score(score);
+      // Игра окончена, показываем результаты
+    }
+  };
+
+  endPlayerRoundRef.current = endPlayerRound;
+
+  // Таймер для мультиплеера
+  useEffect(() => {
+    if (gameMode === "multiplayer" && isGameActive) {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            if (endPlayerRoundRef.current) {
+              endPlayerRoundRef.current();
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [gameMode, isGameActive]);
+
+  const resetMultiplayerGame = () => {
+    setCurrentPlayer(1);
+    setPlayer1Score(0);
+    setPlayer2Score(0);
+    setScore(0);
+    setLevel(1);
+    setSpeedText("1x");
+    currentSpeedRef.current = baseSpeedRef.current;
+    setTimeLeft(gameTimeRef.current);
+    setIsGameActive(true);
+    setMode();
+    positionCube();
+    startTeleportTimer();
+  };
 
   const updateProgress = (newScore: number) => {
     setLevel(Math.floor(newScore / 10) + 1);
@@ -163,10 +255,14 @@ export default function TeleportingCubeGameApp() {
 
     if (isBombRef.current) {
       createClickEffect(e.clientX, e.clientY, "error");
-      setScore(0);
-      setLevel(1);
-      currentSpeedRef.current = baseSpeedRef.current;
-      setSpeedText("1x");
+      if (gameMode === "multiplayer" && isGameActive) {
+        endPlayerRound();
+      } else {
+        setScore(0);
+        setLevel(1);
+        currentSpeedRef.current = baseSpeedRef.current;
+        setSpeedText("1x");
+      }
     } else {
       createClickEffect(e.clientX, e.clientY, "success");
       cubeClickedRef.current = true;
@@ -186,12 +282,15 @@ export default function TeleportingCubeGameApp() {
     }, 100);
   };
 
+
   useEffect(() => {
-    setMode();
-    positionCube();
-    startTeleportTimer();
-    return clearTimer;
-  }, []);
+    if (gameMode === "single" || (gameMode === "multiplayer" && isGameActive)) {
+      setMode();
+      positionCube();
+      startTeleportTimer();
+      return clearTimer;
+    }
+  }, [gameMode, isGameActive]);
 
   useEffect(() => {
     applyCurrentSkin();
@@ -206,9 +305,110 @@ export default function TeleportingCubeGameApp() {
   }));
 
   return (
-    <div className="app-wrap">
-      {/* UI + CSS оставлены как у тебя */}
-      {/* game-area, cube, skins, achievements — всё фронт */}
+    <div className={styles.appWrap}>
+      <div className={styles.modeSelector}>
+        <button 
+          className={`${styles.modeButton} ${gameMode === "single" ? styles.active : ""}`}
+          onClick={() => {
+            setGameMode("single");
+            resetMultiplayerGame();
+          }}
+        >
+          Single Player
+        </button>
+        <button 
+          className={`${styles.modeButton} ${gameMode === "multiplayer" ? styles.active : ""}`}
+          onClick={() => {
+            setGameMode("multiplayer");
+            resetMultiplayerGame();
+          }}
+        >
+          Multiplayer
+        </button>
+      </div>
+
+      {gameMode === "multiplayer" && (
+        <div className={styles.multiplayerInfo}>
+          <div className={styles.playerIndicator}>
+            <div className={`${styles.playerCard} ${currentPlayer === 1 ? styles.active : ""}`}>
+              <h3>Player 1</h3>
+              <div className={styles.playerScore}>Score: {player1Score}</div>
+              <div className={styles.playerBest}>Best: {player1MaxScoreRef.current}</div>
+            </div>
+            <div className={styles.vs}>VS</div>
+            <div className={`${styles.playerCard} ${currentPlayer === 2 ? styles.active : ""}`}>
+              <h3>Player 2</h3>
+              <div className={styles.playerScore}>Score: {player2Score}</div>
+              <div className={styles.playerBest}>Best: {player2MaxScoreRef.current}</div>
+            </div>
+          </div>
+          {isGameActive && (
+            <div className={styles.timer}>
+              <div className={styles.timerLabel}>Time Left</div>
+              <div className={styles.timerValue}>{timeLeft}s</div>
+            </div>
+          )}
+          {!isGameActive && currentPlayer === 2 && player2Score > 0 && (
+            <div className={styles.gameResult}>
+              <h2>
+                {player1Score > player2Score ? "Player 1 Wins!" :
+                 player2Score > player1Score ? "Player 2 Wins!" : "It's a Tie!"}
+              </h2>
+              <button className={styles.playAgainButton} onClick={resetMultiplayerGame}>
+                Play Again
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div ref={gameAreaRef} className={styles.gameArea} style={{ opacity: isGameActive ? 1 : 0.5 }}>
+        <div 
+          ref={cubeRef} 
+          className={styles.cube}
+          onClick={isGameActive ? onCubeClick : undefined}
+          style={{ cursor: isGameActive ? 'pointer' : 'not-allowed' }}
+        />
+      </div>
+      <div className={styles.gameInfo}>
+        <div className={styles.statsGrid}>
+          <div className={styles.statItem}>
+            <div className={styles.statLabel}>Score</div>
+            <div className={styles.statValue}>{score}</div>
+          </div>
+          <div className={styles.statItem}>
+            <div className={styles.statLabel}>Level</div>
+            <div className={styles.statValue}>{level}</div>
+          </div>
+          <div className={styles.statItem}>
+            <div className={styles.statLabel}>Speed</div>
+            <div className={styles.statValue}>{speedText}</div>
+          </div>
+          <div className={styles.statItem}>
+            <div className={styles.statLabel}>Best Score</div>
+            <div className={styles.statValue}>
+              {gameMode === "single" ? maxScoreRef.current : 
+               currentPlayer === 1 ? player1MaxScoreRef.current : player2MaxScoreRef.current}
+            </div>
+          </div>
+        </div>
+        {gameMode === "single" && (
+          <div className={styles.achievementsSection}>
+            <h3 className={styles.achievementsTitle}>Achievements</h3>
+            <div className={styles.achievementsList}>
+              {achievementsList.map(a => (
+                <div 
+                  key={a.id} 
+                  className={`${styles.achievementItem} ${a.unlocked ? styles.unlocked : ''}`}
+                >
+                  <span className={styles.achievementText}>{a.text}</span>
+                  {a.unlocked && <span className={styles.achievementCheck}>✓</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

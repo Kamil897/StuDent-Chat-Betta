@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { handleGameWin } from '../../utils/gameRewards';
 
 /* =======================
    CONSTANTS
@@ -300,7 +301,6 @@ const ArenaShooter: React.FC = () => {
         if (p.bot && p.alive) {
           const target = server.players.find(pl => pl.id !== p.id && pl.alive);
           if (target && Math.random() < 0.015) {
-            const direction = Math.sign(target.pos.y - p.pos.y);
             p.lastShot = Date.now() - FIRE_COOLDOWN; // сброс cooldown для выстрела
             server.shoot(p.id);
           }
@@ -319,6 +319,13 @@ const ArenaShooter: React.FC = () => {
   );
 
   const winner = server.ended ? server.getWinner() : null;
+  
+  // Award points when player wins
+  useEffect(() => {
+    if (winner && winner.id === myId.current) {
+      handleGameWin("Arena Shooter");
+    }
+  }, [winner]);
 
   return (
     <div style={{ background: '#0b0b0b', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff' }}>

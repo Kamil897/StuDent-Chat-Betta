@@ -1,0 +1,424 @@
+.appWrap {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.appWrap::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: moveBackground 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes moveBackground {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+.gameArea {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: 500px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .gameArea {
+    height: 400px;
+    max-width: 100%;
+    border-radius: 15px;
+  }
+  
+  .appWrap {
+    padding: 10px;
+  }
+}
+
+.cube {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.cube:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+}
+
+.cube.clicked {
+  animation: clickAnimation 0.4s ease;
+}
+
+@keyframes clickAnimation {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.cube.bomb {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  animation: bombPulse 1s ease-in-out infinite;
+}
+
+@keyframes bombPulse {
+  0%, 100% { 
+    box-shadow: 0 5px 15px rgba(244, 67, 54, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 5px 25px rgba(244, 67, 54, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+.clickEffect {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: effectFade 0.6s ease-out;
+}
+
+.clickEffect.success {
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.8) 0%, transparent 70%);
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+}
+
+.clickEffect.error {
+  background: radial-gradient(circle, rgba(244, 67, 54, 0.8) 0%, transparent 70%);
+  box-shadow: 0 0 20px rgba(244, 67, 54, 0.6);
+}
+
+@keyframes effectFade {
+  0% {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+.gameInfo {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.statItem {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.achievementsSection {
+  margin-top: 20px;
+}
+
+.achievementsTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.achievementsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.achievementItem {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.achievementItem.unlocked {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: rgba(76, 175, 80, 0.5);
+}
+
+.achievementItem.unlocked .achievementText {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.achievementText {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.achievementCheck {
+  color: #4CAF50;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.modeSelector {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.modeButton {
+  padding: 0.8rem 2rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.modeButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.modeButton.active {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.multiplayerInfo {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.playerIndicator {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.playerCard {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.playerCard.active {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.playerCard h3 {
+  color: white;
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.playerScore {
+  color: #ffd700;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 5px 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.playerBest {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.vs {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.timer {
+  text-align: center;
+  padding: 15px;
+  background: rgba(255, 215, 0, 0.2);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 215, 0, 0.4);
+}
+
+.timerLabel {
+  color: white;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.timerValue {
+  color: #ffd700;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.gameResult {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+.gameResult h2 {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.playAgainButton {
+  padding: 0.8rem 2rem;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.playAgainButton:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .statItem {
+    padding: 12px;
+  }
+  
+  .statValue {
+    font-size: 1.5rem;
+  }
+  
+  .achievementsList {
+    grid-template-columns: 1fr;
+  }
+  
+  .gameInfo {
+    padding: 15px;
+  }
+  
+  .modeSelector {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modeButton {
+    width: 100%;
+  }
+  
+  .playerIndicator {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .vs {
+    margin: 10px 0;
+    font-size: 1.5rem;
+  }
+  
+  .timerValue {
+    font-size: 2rem;
+  }
+  
+  .gameResult h2 {
+    font-size: 1.5rem;
+  }
+}
+

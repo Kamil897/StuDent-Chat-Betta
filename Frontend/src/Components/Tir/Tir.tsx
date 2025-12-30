@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { handleGameWin } from '../../utils/gameRewards';
 import './Tir.css';
 
 const Tir = () => {
@@ -43,12 +44,21 @@ const Tir = () => {
   useEffect(() => {
     if (!isMenuOpen && timeLeft > 0) {
       const timer = setTimeout(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            // Game over - award points based on score
+            if (score >= 15) {
+              handleGameWin("Tir");
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
 
       return () => clearTimeout(timer);
     }
-  }, [isMenuOpen, timeLeft]);
+  }, [isMenuOpen, timeLeft, score]);
 
   const resetGame = () => {
     setScore(0);

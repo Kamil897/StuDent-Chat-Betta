@@ -99,3 +99,22 @@
   vertical-align: middle;
   margin-left: 0.5rem;
 }
+
+.priceDisplay {
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.realMoneyPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #10b981;
+  display: block;
+}
+
+.pointsPrice {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #6366f1;
+  display: block;
+}

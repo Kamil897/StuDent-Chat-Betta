@@ -55,3 +55,98 @@
   font-size: 14px;
   color: #666;
 }
+
+.buttonWrapper {
+  margin: 7px auto 0;
+  display: block;
+  text-align: center;
+}
+
+.customLearnMorebtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 30px;
+  border: 2px solid #282936;
+  background: transparent;
+  color: #282936;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    color 0.3s ease-in-out,
+    border-color 0.3s ease-in-out,
+    background-color 0.3s ease-in-out;
+}
+
+.customLearnMorebtn .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3rem;
+  height: 3rem;
+  background: #282936;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition:     
+    transform 0.5s ease-in-out,
+    opacity 0.3s ease-in-out;
+  z-index: -1;
+}
+
+.customLearnMorebtn .buttonText {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customLearnMorebtn .arrow {
+  width: 14px;
+  height: 2px;
+  background: #282936;
+  position: relative;
+  transition:
+    transform 0.3s ease-in-out,
+    background 0.3s ease-in-out;
+}
+
+.customLearnMorebtn .arrow::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid #282936;
+  border-top: 2px solid #282936;
+  transform: rotate(45deg);
+  right: -3px;
+  top: -3px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.customLearnMorebtn:hover {
+  color: #fff;
+  background: #282936;
+  border-color: transparent;
+}
+
+.customLearnMorebtn:hover .circle {
+  transform: translate(-50%, -50%) scale(4);
+}
+
+.customLearnMorebtn:hover .arrow {
+  background: #fff;
+  transform: translateX(5px);
+}
+
+.customLearnMorebtn:hover .arrow::after {
+  border-color: #fff;
+}
+
+.customLearnMorebtn:active {
+  transform: scale(0.98);
+}
