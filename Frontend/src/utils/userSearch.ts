@@ -103,12 +103,38 @@ export function registerUser(user: SearchableUser): void {
   }
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+
 /**
  * Search users by name or username
+ * Использует backend API для поиска, с fallback на локальный поиск
  */
-export function searchUsers(query: string): SearchableUser[] {
+export async function searchUsers(query: string): Promise<SearchableUser[]> {
   if (!query.trim()) return [];
   
+  // Пытаемся найти через backend API
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/search?q=${encodeURIComponent(query)}&limit=20`, {
+      credentials: "include",
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.users && data.users.length > 0) {
+        return data.users.map((user: any) => ({
+          id: user.id,
+          username: user.username,
+          name: `${user.name} ${user.surname || ""}`.trim() || user.username,
+          email: user.email,
+          avatarSeed: user.avatarSeed,
+        }));
+      }
+    }
+  } catch (error) {
+    console.error("Error searching users via API:", error);
+  }
+  
+  // Fallback: локальный поиск
   const allUsers = getAllRegisteredUsers();
   const lowerQuery = query.toLowerCase().trim();
   

@@ -71,6 +71,15 @@
     border-bottom: none;
   }
   
+  .notificationItem.unread {
+    background-color: #f0f8ff;
+    font-weight: 500;
+  }
+  
+  .notificationItem.unread:hover {
+    background-color: #e0f0ff;
+  }
+  
   .right {
     position: absolute;
     right: 20px;

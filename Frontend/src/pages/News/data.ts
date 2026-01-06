@@ -39,13 +39,13 @@ export const news: NewsItem[] = [
     category: 'world',
   },
   {
-    id: '5',
+    id: '18',
     title: 'Новость мира',
     text: 'Текст новости мира',
     category: 'world',
   },
   {
-    id: '5',
+    id: '19',
     title: 'Новость мира',
     text: 'Текст новости мира',
     category: 'world',

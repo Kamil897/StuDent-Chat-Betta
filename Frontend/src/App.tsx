@@ -29,8 +29,16 @@ import TeleportingCubeGame from './Components/TeleportingCube/TeleportingCubeGam
 import Magaz from './pages/Magaz/Magaz'
 import Tir from './Components/Tir/Tir'
 import SnakeGame from './Components/Snake/Snake'
+import Complaints from './pages/Complaints/Complaints'
+import { useEffect } from 'react'
+import { startApiSync } from './utils/apiSync'
 
 function App() {
+  useEffect(() => {
+    // Запускаем синхронизацию с бэкендом при старте приложения
+    startApiSync()
+  }, [])
+
   return (
     <BrowserRouter>
       <Header />
@@ -61,6 +69,7 @@ function App() {
         <Route path='/games/Tir' element={<Tir/>}/>
         <Route path='/games/Snake' element={<SnakeGame/>}/>
         <Route path='/games/TeleportingCubeGame' element={<TeleportingCubeGame/>}/>
+        <Route path='/complaints' element={<Complaints/>}/>
       </Routes>
       <PointsNotification />
       <Footer />

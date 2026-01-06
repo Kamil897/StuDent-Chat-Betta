@@ -78,6 +78,24 @@ export function saveChatRooms(rooms: ChatRoom[]): void {
   localStorage.setItem(STORAGE_KEY_ROOMS, JSON.stringify(rooms));
 }
 
+export function deleteChatRoom(roomId: string): void {
+  const rooms = getChatRooms();
+  const filtered = rooms.filter((r) => r.id !== roomId);
+  saveChatRooms(filtered);
+  
+  // Also delete all messages from this room
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY_MESSAGES);
+    if (stored) {
+      const allMessages: Message[] = JSON.parse(stored);
+      const filteredMessages = allMessages.filter((m) => m.chatId !== roomId);
+      localStorage.setItem(STORAGE_KEY_MESSAGES, JSON.stringify(filteredMessages));
+    }
+  } catch (e) {
+    console.error("Error deleting messages:", e);
+  }
+}
+
 export function createChatRoom(
   name: string,
   type: ChatType,

@@ -133,6 +133,10 @@ export function unlockAchievement(id: AchievementId): boolean {
 
     // Dispatch custom event for UI updates
     window.dispatchEvent(new CustomEvent("achievement-unlocked", { detail: { id, achievement } }));
+    
+    // Add notification
+    const { notifyAchievement } = await import("./notifications");
+    notifyAchievement(achievement.name, achievement.description);
 
     return true;
   } catch (error) {

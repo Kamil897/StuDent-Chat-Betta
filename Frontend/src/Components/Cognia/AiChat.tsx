@@ -30,9 +30,13 @@ const AiChat: React.FC = () => {
 
   // Автоскролл
   useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
+    // Используем setTimeout для корректного автоскролла после рендера
+    const timer = setTimeout(() => {
+      if (chatBoxRef.current) {
+        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+      }
+    }, 100);
+    return () => clearTimeout(timer);
   }, [messages, isLoading]);
 
   // Загрузка сообщений

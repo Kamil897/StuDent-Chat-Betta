@@ -29,6 +29,9 @@ import {
   type SubscriptionPlan
 } from "../../utils/payment";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+
 /* =======================
    TYPES
 ======================= */
@@ -135,8 +138,19 @@ const Magaz: React.FC = () => {
   // Generate game unlock products
   useEffect(() => {
     const locked = getLockedGames();
-    const gameUnlockProducts: Product[] = locked.map((gameId) => ({
-      id: 1000 + gameId.charCodeAt(0), // Unique ID
+    // Генерируем уникальный ID на основе хеша всей строки gameId
+    const hashString = (str: string): number => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      return Math.abs(hash);
+    };
+    
+    const gameUnlockProducts: Product[] = locked.map((gameId, index) => ({
+      id: 1000 + (hashString(gameId) % 9000) + index, // Уникальный ID на основе хеша и индекса
       name: `Разблокировать ${gameId}`,
       description: `Откройте доступ к игре ${gameId}`,
       image: "/images/game.png",
@@ -150,8 +164,19 @@ const Magaz: React.FC = () => {
 
   // Generate subscription products from plans
   useEffect(() => {
-    const subProducts: Product[] = SUBSCRIPTION_PLANS.map((plan) => ({
-      id: 2000 + plan.id.charCodeAt(0),
+    // Генерируем уникальный ID на основе хеша всей строки planId
+    const hashString = (str: string): number => {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      return Math.abs(hash);
+    };
+    
+    const subProducts: Product[] = SUBSCRIPTION_PLANS.map((plan, index) => ({
+      id: 2000 + (hashString(plan.id) % 9000) + index, // Уникальный ID на основе хеша и индекса
       name: plan.name,
       description: plan.description,
       image: plan.type === "cognia" ? "/images/cognia.png" : "/images/trai.png",
@@ -275,6 +300,19 @@ const Magaz: React.FC = () => {
             return updated;
           });
           showNotification(`✅ Игра "${product.gameId}" разблокирована!`, "success");
+          
+          // Add notification
+          import("../../utils/notifications").then(({ notifyPurchase }) => {
+            notifyPurchase(product.name || product.gameId, "game");
+          });
+
+          // Пытаемся уведомить backend об успешной разблокировке (необязательно)
+          fetch(`${API_BASE_URL}/games/${encodeURIComponent(product.gameId)}/unlock`, {
+            method: "POST",
+            credentials: "include",
+          }).catch(() => {
+            // если backend недоступен или нет авторизации — просто игнорируем
+          });
         }
       }
       return;
@@ -295,6 +333,11 @@ const Magaz: React.FC = () => {
         return updated;
       });
       showNotification(`✅ ${product.name} ${t("shop.success")}`, "success");
+      
+      // Add notification
+      import("../../utils/notifications").then(({ notifyPurchase }) => {
+        notifyPurchase(product.name, product.type === "subscription" ? "subscription" : "other");
+      });
     }
   };
 
@@ -454,9 +497,18 @@ const Magaz: React.FC = () => {
             ? { ...productWithTime, currency: product.currency, type: "subscription" }
             : productWithTime;
 
+          // Генерируем уникальный ключ на основе типа и уникального идентификатора
+          const uniqueKey = product.type === "game" && product.gameId
+            ? `game-${product.gameId}`
+            : product.type === "subscription" && product.planId
+            ? `subscription-${product.planId}`
+            : product.type === "lottery"
+            ? `lottery-${product.id}`
+            : `${product.type}-${product.id}`;
+
           return (
             <Shop
-              key={product.id}
+              key={uniqueKey}
               prefix={displayProduct}
               onBuy={() => handleBuy(product)}
               disabled={(() => {
@@ -517,6 +569,25 @@ const Magaz: React.FC = () => {
                   setPaymentProcessing(false);
                   
                   if (result.success) {
+                    // Активируем подписку на backend (если пользователь авторизован)
+                    const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
+                    if (token) {
+                      fetch(`${API_BASE_URL}/subscriptions/activate`, {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                          "Content-Type": "application/json",
+                          "Authorization": `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          type: selectedPlan.type,
+                          durationDays: selectedPlan.duration,
+                        }),
+                      }).catch(() => {
+                        // тихо игнорируем ошибки сети/авторизации
+                      });
+                    }
+
                     showNotification(`✅ Подписка активирована! ID транзакции: ${result.transactionId}`, "success");
                     setShowPaymentModal(false);
                     setSelectedPlan(null);
@@ -536,6 +607,25 @@ const Magaz: React.FC = () => {
                   setPaymentProcessing(false);
                   
                   if (result.success) {
+                    // Активируем подписку на backend (если пользователь авторизован)
+                    const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
+                    if (token) {
+                      fetch(`${API_BASE_URL}/subscriptions/activate`, {
+                        method: "POST",
+                        credentials: "include",
+                        headers: {
+                          "Content-Type": "application/json",
+                          "Authorization": `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          type: selectedPlan.type,
+                          durationDays: selectedPlan.duration,
+                        }),
+                      }).catch(() => {
+                        // тихо игнорируем ошибки сети/авторизации
+                      });
+                    }
+
                     showNotification(`✅ Подписка активирована! ID транзакции: ${result.transactionId}`, "success");
                     setShowPaymentModal(false);
                     setSelectedPlan(null);

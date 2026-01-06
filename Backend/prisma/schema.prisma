@@ -1,0 +1,300 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(uuid())
+  email       String        @unique
+  username    String        @unique
+  passwordHash String
+  name        String
+  surname     String?
+  avatarSeed  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  roles       UserRole[]
+  sessions    Session[]
+  complaintsReported Complaint[] @relation("ComplaintsReported")
+  complaintsTargeted Complaint[] @relation("ComplaintsTargeted")
+
+  pointsTransactions PointsTransaction[]
+  leaderboardEntry   LeaderboardEntry?
+  friendRequestsSent FriendRequest[] @relation("FriendRequestsSent")
+  friendRequestsReceived FriendRequest[] @relation("FriendRequestsReceived")
+}
+
+model Role {
+  id    Int       @id @default(autoincrement())
+  name  String    @unique
+  users UserRole[]
+}
+
+model UserRole {
+  userId String
+  roleId Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  refreshToken String   @unique
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+  revokedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum ComplaintTargetType {
+  user
+  message
+  post
+  other
+}
+
+enum ComplaintStatus {
+  pending
+  reviewed
+  rejected
+  accepted
+}
+
+model Complaint {
+  id             String              @id @default(uuid())
+  reporterId     String
+  targetUserId   String?
+  targetContentId String?
+  targetType     ComplaintTargetType
+  reason         String
+  comment        String?
+  status         ComplaintStatus     @default(pending)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  reporter   User @relation("ComplaintsReported", fields: [reporterId], references: [id], onDelete: Cascade)
+  targetUser User? @relation("ComplaintsTargeted", fields: [targetUserId], references: [id])
+
+  @@index([reporterId])
+  @@index([targetUserId])
+  @@index([targetType, targetContentId])
+}
+
+model LeaderboardEntry {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum PointsTransactionType {
+  game_win
+  achievement
+  shop_purchase
+  reward
+}
+
+model PointsTransaction {
+  id        String               @id @default(uuid())
+  userId    String
+  type      PointsTransactionType
+  amount    Int
+  source    String
+  createdAt DateTime             @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Minimal tables for sync API compatibility (can be extended later)
+
+model ChatRoom {
+  id          String    @id @default(uuid())
+  name        String
+  type        String
+  category    String?
+  description String?
+  icon        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  chatId    String
+  userId    String?
+  username  String?
+  text      String
+  type      String
+  fileUrl   String?
+  fileName  String?
+  fileType  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chat ChatRoom @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+}
+
+model Friend {
+  id        String   @id @default(uuid())
+  userId    String
+  friendId  String
+  name      String
+  email     String?
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([friendId])
+  @@unique([userId, friendId])
+}
+
+model FriendRequest {
+  id        String   @id @default(uuid())
+  fromUserId String
+  toUserId   String
+  status     String   @default("pending") // pending | accepted | rejected
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  fromUser User @relation("FriendRequestsSent", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("FriendRequestsReceived", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([fromUserId])
+  @@index([toUserId])
+  @@index([status])
+  @@unique([fromUserId, toUserId])
+}
+
+model Game {
+  id          String   @id
+  displayName String
+  unlockPrice Int
+}
+
+model GameUnlock {
+  id        String   @id @default(uuid())
+  userId    String
+  gameId    String
+  unlockedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([gameId])
+}
+
+model Achievement {
+  id          String   @id
+  name        String
+  description String
+  icon        String
+}
+
+model UserAchievement {
+  id           String   @id @default(uuid())
+  userId       String
+  achievementId String
+  unlockedAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([achievementId])
+}
+
+// AI memory models
+
+model AiUserProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  bio       String?
+  preferences Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AiConversation {
+  id            String   @id @default(uuid())
+  userId        String
+  assistantType String   // e.g. "cognia" | "trai"
+  openAiThreadId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  messages AiMessage[]
+
+  @@index([userId, assistantType])
+}
+
+model AiMessage {
+  id             String   @id @default(uuid())
+  conversationId String
+  role           String   // "user" | "assistant" | "system"
+  content        String
+  createdAt      DateTime @default(now())
+
+  conversation AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+model AiUsage {
+  id            String   @id @default(uuid())
+  userId        String
+  assistantType String   // "cognia" | "trai"
+  date          DateTime // normalized to day
+  count         Int      @default(0)
+
+  @@unique([userId, assistantType, date])
+}
+
+model UserSubscription {
+  id         String   @id @default(uuid())
+  userId     String
+  type       String   // \"cognia\" | \"trai\" | other
+  startedAt  DateTime @default(now())
+  expiresAt  DateTime
+  isActive   Boolean  @default(true)
+
+  @@index([userId, type, isActive])
+}
+
+model MatchQueue {
+  id        String   @id @default(uuid())
+  userId    String
+  gameId    String   // pingpong | arena | cube | tictactoe
+  status    String   @default("searching") // searching | matched | cancelled
+  createdAt DateTime @default(now())
+
+  @@index([gameId, status])
+  @@index([userId, status])
+}
+
+model Match {
+  id         String   @id @default(uuid())
+  gameId     String
+  player1Id  String
+  player2Id  String
+  status     String   @default("pending") // pending | active | finished | cancelled
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+

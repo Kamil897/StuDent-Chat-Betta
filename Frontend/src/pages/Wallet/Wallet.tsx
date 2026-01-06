@@ -8,6 +8,9 @@ import {
   type PointsTransaction,
 } from "../../utils/points";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+
 const Wallet: React.FC = () => {
   const { t } = useTranslation();
 
@@ -18,10 +21,55 @@ const Wallet: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"balance" | "transactions" | "stats">("balance");
 
   useEffect(() => {
+    // Локальные данные как fallback
     setPoints(getPoints());
     setTransactions(getTransactions());
     setStats(getPointsStats());
     setLoading(false);
+
+    // Попробовать подтянуть данные с backend (если доступен)
+    const fetchFromApi = async () => {
+      try {
+        // Кошелёк: баланс + статистика
+        const walletRes = await fetch(`${API_BASE_URL}/wallet`, {
+          credentials: "include",
+        });
+        if (walletRes.ok) {
+          const walletData = await walletRes.json();
+          if (typeof walletData.balance === "number") {
+            setPoints(walletData.balance);
+          }
+          if (walletData.stats) {
+            setStats(walletData.stats);
+          }
+        }
+
+        // Транзакции
+        const txRes = await fetch(
+          `${API_BASE_URL}/wallet/transactions?page=1&pageSize=100`,
+          { credentials: "include" },
+        );
+        if (txRes.ok) {
+          const txData = await txRes.json();
+          const items = Array.isArray(txData.items) ? txData.items : [];
+          const mapped: PointsTransaction[] = items.map((tx: any) => ({
+            id:
+              typeof tx.id === "number"
+                ? tx.id
+                : Date.parse(tx.createdAt || "") || Date.now(),
+            type: tx.type,
+            amount: tx.amount,
+            source: tx.source,
+            createdAt: tx.createdAt,
+          }));
+          setTransactions(mapped);
+        }
+      } catch {
+        // В оффлайне остаёмся на локальных данных
+      }
+    };
+
+    fetchFromApi();
 
     const handleStorageChange = () => {
       setPoints(getPoints());

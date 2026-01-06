@@ -2,6 +2,20 @@ import React, { useRef, useEffect, useState } from "react";
 import styles from "./Ping.module.css";
 import { useNavigate } from 'react-router-dom';
 import { handleGameWin } from '../../utils/gameRewards';
+import { findMatch, cancelMatchSearch } from '../../utils/matchmakingSocket';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
+
+// Получить токен авторизации
+function getAuthToken(): string | null {
+  try {
+    return localStorage.getItem("accessToken") || 
+           localStorage.getItem("token") ||
+           localStorage.getItem("authToken");
+  } catch {
+    return null;
+  }
+}
 
 
 interface GameState {
@@ -26,6 +40,9 @@ const PongNeon: React.FC = () => {
   const previousTimeRef = useRef<number | undefined>(undefined);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isSearchingMatch, setIsSearchingMatch] = useState<boolean>(false);
+  const [matchStatus, setMatchStatus] = useState<string>("");
+  const matchStatusIntervalRef = useRef<number | null>(null);
   // const { addPoints } = useUser();
   const navigate = useNavigate();
   // const { t } = useTranslation();
@@ -52,6 +69,70 @@ const PongNeon: React.FC = () => {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // Очистка интервала поиска матча при размонтировании
+  useEffect(() => {
+    return () => {
+      if (matchStatusIntervalRef.current) {
+        clearInterval(matchStatusIntervalRef.current);
+        matchStatusIntervalRef.current = null;
+      }
+    };
+  }, []);
+
+  // Поиск матча через WebSocket для real-time подбора
+  const findMatchHandler = () => {
+    const token = getAuthToken();
+    if (!token) {
+      alert("Требуется авторизация для мультиплеера");
+      return;
+    }
+
+    setIsSearchingMatch(true);
+    setMatchStatus("Поиск соперника...");
+
+    // Используем WebSocket для real-time matchmaking
+    findMatch("PingPong", {
+      onSearching: () => {
+        setMatchStatus("Поиск соперника...");
+      },
+      onMatchFound: (data: { matchId: string; opponentId: string; gameId: string }) => {
+        setMatchStatus(`Матч найден! ID: ${data.matchId}`);
+        setIsSearchingMatch(false);
+        setMatchId(data.matchId);
+        setOpponentId(data.opponentId);
+        if (matchStatusIntervalRef.current) {
+          clearInterval(matchStatusIntervalRef.current);
+          matchStatusIntervalRef.current = null;
+        }
+        // TODO: Здесь можно запустить игру с оппонентом
+      },
+      onError: (error: string) => {
+        console.error("Matchmaking error:", error);
+        setMatchStatus(`Ошибка: ${error}`);
+        setIsSearchingMatch(false);
+        if (matchStatusIntervalRef.current) {
+          clearInterval(matchStatusIntervalRef.current);
+          matchStatusIntervalRef.current = null;
+        }
+      },
+    });
+  };
+
+  // Отмена поиска матча через WebSocket
+  const cancelMatchSearchHandler = () => {
+    const token = getAuthToken();
+    if (!token) return;
+
+    cancelMatchSearch(() => {
+      setIsSearchingMatch(false);
+      setMatchStatus("");
+      if (matchStatusIntervalRef.current) {
+        clearInterval(matchStatusIntervalRef.current);
+        matchStatusIntervalRef.current = null;
+      }
+    });
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -343,11 +424,38 @@ const handleButtonUp = (direction: Direction): void => {
               state.playerScore = 0;
               state.aiScore = 0;
             }}
+            disabled={isSearchingMatch}
           >
-            {isMobile ? "Tap to Start" : "Start Game"}
+            {isMobile ? "Tap to Start" : "Start Game (vs AI)"}
           </button>
 
-          <button className={styles["back-button"]} onClick={() => navigate('/Games')}>
+          <button
+            className={styles["start-button"]}
+            onClick={isSearchingMatch ? cancelMatchSearchHandler : findMatchHandler}
+            style={{ marginTop: "10px", backgroundColor: isSearchingMatch ? "#f44336" : "#4CAF50" }}
+          >
+            {isSearchingMatch ? "Cancel Search" : "Find Match (Multiplayer)"}
+          </button>
+
+          {matchStatus && (
+            <div style={{ 
+              marginTop: "20px", 
+              padding: "10px", 
+              backgroundColor: "rgba(0,0,0,0.7)", 
+              color: "white",
+              borderRadius: "5px",
+              textAlign: "center"
+            }}>
+              {matchStatus}
+            </div>
+          )}
+
+          <button className={styles["back-button"]} onClick={() => {
+            if (isSearchingMatch) {
+              cancelMatchSearchHandler();
+            }
+            navigate('/Games');
+          }}>
             Back
           </button>
         </>

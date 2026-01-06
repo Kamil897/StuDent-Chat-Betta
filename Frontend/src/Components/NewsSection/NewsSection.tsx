@@ -63,26 +63,26 @@ export const NewsSection = ({
         }`}
       >
         {variant === 'world' &&
-          topItems.map(item => (
-            <NewsCard key={item.id} item={item} />
+          topItems.map((item, index) => (
+            <NewsCard key={`${item.id}-${index}`} item={item} />
           ))}
 
         {variant === 'student' &&
-          studentItems.map(item => (
-            <NewsCard key={item.id} item={item} />
+          studentItems.map((item, index) => (
+            <NewsCard key={`${item.id}-${index}`} item={item} />
           ))}
 
         {variant === 'sidebar' &&
-          sidebarItems.map(item => (
-            <NewsCard key={item.id} item={item} />
+          sidebarItems.map((item, index) => (
+            <NewsCard key={`${item.id}-${index}`} item={item} />
           ))}
       </div>
 
       {/* FEED (WORLD) */}
       {variant === 'world' && (
         <ul className={styles.feed}>
-          {feedItems.map(item => (
-            <li key={item.id} className={styles.feedItem}>
+          {feedItems.map((item, index) => (
+            <li key={`${item.id}-feed-${index}`} className={styles.feedItem}>
               <Link to={`/news/${item.id}`} className={styles.feedLink}>
                 <h4>{item.title}</h4>
                 <p>{item.text}</p>

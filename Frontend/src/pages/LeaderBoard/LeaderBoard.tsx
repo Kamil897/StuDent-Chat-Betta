@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./LeaderBoard.module.css";
 import { getLeaderboard, syncCurrentUserPoints, removeDuplicates, type LeaderboardUser } from "../../utils/leaderboard";
+import { connectLeaderboardSocket, onLeaderboardUpdate, offLeaderboardUpdate, disconnectLeaderboardSocket } from "../../utils/leaderboardSocket";
 
 export default function Leaderboard() {
   const { t } = useTranslation();
@@ -23,11 +24,26 @@ export default function Leaderboard() {
       const savedUser = localStorage.getItem("user");
       if (savedUser) {
         const user = JSON.parse(savedUser);
-        setCurrentUserId(user.id || null);
+        setCurrentUserId(user.id || user.username || null);
       }
     } catch (e) {
       console.error("Error loading current user:", e);
     }
+
+    // Подключаемся к WebSocket для real-time обновлений
+    connectLeaderboardSocket();
+
+    // Подписываемся на обновления лидерборда
+    const handleLeaderboardUpdate = (leaderboard: any[]) => {
+      setLeaderboardData(leaderboard);
+    };
+
+    onLeaderboardUpdate(handleLeaderboardUpdate);
+
+    return () => {
+      offLeaderboardUpdate(handleLeaderboardUpdate);
+      disconnectLeaderboardSocket();
+    };
   }, []);
 
   useEffect(() => {
@@ -41,12 +57,9 @@ export default function Leaderboard() {
     window.addEventListener("storage", updateLeaderboard);
     window.addEventListener("game-win" as any, updateLeaderboard);
 
-    const interval = setInterval(updateLeaderboard, 2000);
-
     return () => {
       window.removeEventListener("storage", updateLeaderboard);
       window.removeEventListener("game-win" as any, updateLeaderboard);
-      clearInterval(interval);
     };
   }, []);
 

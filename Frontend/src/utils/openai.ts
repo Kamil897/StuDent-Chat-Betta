@@ -1,9 +1,23 @@
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || "";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 export const ASSISTANT_IDS = {
   COGNIA: "asst_iHlf5gxAhgS2R9sJI3svvvOl",
   TRAI: "asst_GgxV7wSMhQd35Q8YZfKgeHO0",
 } as const;
+
+// Получить токен авторизации из localStorage
+function getAuthToken(): string | null {
+  try {
+    // Проверяем разные возможные ключи для токена
+    const token = localStorage.getItem("accessToken") || 
+                  localStorage.getItem("token") ||
+                  localStorage.getItem("authToken");
+    return token;
+  } catch {
+    return null;
+  }
+}
 
 export async function createThread(): Promise<string> {
   if (!OPENAI_API_KEY) {
@@ -37,8 +51,40 @@ export async function sendMessageToAssistant(
   assistantId: string,
   message: string
 ): Promise<string> {
+  // Пытаемся использовать бэкенд API сначала
+  const token = getAuthToken();
+  if (token) {
+    try {
+      const assistantType = assistantId === ASSISTANT_IDS.COGNIA ? "cognia" : "trai";
+      const response = await fetch(`${API_BASE_URL}/ai/${assistantType}/message`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.reply || data.response || String(data);
+      }
+      
+      // Если 401 или 403 - пробуем fallback
+      if (response.status === 401 || response.status === 403) {
+        console.warn("Auth failed, falling back to direct OpenAI API");
+      } else {
+        // Другие ошибки - пробуем fallback
+        console.warn("Backend API error, falling back to direct OpenAI API");
+      }
+    } catch (error) {
+      console.warn("Backend API request failed, falling back to direct OpenAI API:", error);
+    }
+  }
+
+  // Fallback: прямые вызовы OpenAI API
   if (!OPENAI_API_KEY) {
-    throw new Error("OpenAI API key not configured");
+    throw new Error("OpenAI API key not configured and backend auth failed");
   }
 
   try {
@@ -168,6 +214,50 @@ export async function checkIELTSEssay(
     grammar: string;
   };
 }> {
+  // Пытаемся использовать бэкенд API сначала
+  const token = getAuthToken();
+  if (token) {
+    try {
+      const message = `Task Type: ${taskType}\nPrompt: ${prompt}\n\nEssay:\n${essay}`;
+      const response = await fetch(`${API_BASE_URL}/ai/trai/message`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const reply = data.reply || data.response || String(data);
+        
+        // Try to parse JSON from response
+        try {
+          const parsed = JSON.parse(reply);
+          return parsed;
+        } catch {
+          // If parsing fails, extract band score and create feedback
+          const bandMatch = reply.match(/band[:\s]+([0-9.]+)/i);
+          const band = bandMatch ? parseFloat(bandMatch[1]) : 6.0;
+          
+          return {
+            band,
+            feedback: {
+              taskAchievement: "See full feedback in response.",
+              coherence: "See full feedback in response.",
+              lexicalResource: "See full feedback in response.",
+              grammar: "See full feedback in response.",
+            },
+          };
+        }
+      }
+    } catch (error) {
+      console.warn("Backend API request failed, falling back:", error);
+    }
+  }
+
+  // Fallback: прямые вызовы OpenAI API
   if (!OPENAI_API_KEY) {
     // Return mock data if API key is not configured
     return {

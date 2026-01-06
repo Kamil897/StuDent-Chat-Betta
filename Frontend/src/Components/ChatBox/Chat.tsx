@@ -10,6 +10,7 @@ import {
   removeReaction,
   parseMentions,
   saveChatRooms,
+  deleteChatRoom,
   type ChatRoom,
   type Message,
   type ChatType,
@@ -28,6 +29,17 @@ import {
 import { searchUsers, type SearchableUser } from "../../utils/userSearch";
 import { Mic, Paperclip, Smile, Send, Plus, Hash, Users, UserPlus, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import {
+  connectChatSocket,
+  disconnectChatSocket,
+  joinChatRoom,
+  leaveChatRoom,
+  sendChatMessage,
+  onNewMessage,
+  offNewMessage,
+  sendTypingStart,
+  sendTypingStop,
+} from "../../utils/chatSocket";
 
 const ChatComponent: React.FC = () => {
   const [sidebarTab, setSidebarTab] = useState<"chats" | "friends">("chats");
@@ -58,16 +70,55 @@ const ChatComponent: React.FC = () => {
     loadRooms();
     loadFriends();
     loadFriendRequests();
+    
+    // Подключаемся к WebSocket для real-time чатов
+    connectChatSocket();
+    
+    // Подписываемся на новые сообщения
+    const handleNewMessage = (message: Message) => {
+      if (message.chatId === selectedRoomId) {
+        saveMessage(message);
+        setMessages((prev) => [...prev, message]);
+      } else {
+        // Show notification for messages in other rooms
+        const currentUser = getCurrentUser();
+        // Only notify if message is not from current user
+        if (message.userId !== currentUser.id) {
+          import("../../utils/notifications").then(({ notifyMessage }) => {
+            notifyMessage(message.username || "Пользователь", message.text, message.chatId);
+          });
+        }
+      }
+    };
+    
+    onNewMessage(handleNewMessage);
+    
+    return () => {
+      offNewMessage(handleNewMessage);
+      // Не отключаемся полностью, так как можем использовать в других местах
+    };
   }, []);
 
   useEffect(() => {
     if (selectedRoomId) {
       loadMessages(selectedRoomId);
+      // Присоединяемся к комнате через WebSocket
+      joinChatRoom(selectedRoomId);
     }
+    
+    return () => {
+      if (selectedRoomId) {
+        leaveChatRoom(selectedRoomId);
+      }
+    };
   }, [selectedRoomId]);
 
   useEffect(() => {
-    scrollToBottom();
+    // Используем setTimeout для корректного автоскролла после рендера
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    return () => clearTimeout(timer);
   }, [messages]);
 
   const loadRooms = () => {
@@ -114,9 +165,20 @@ const ChatComponent: React.FC = () => {
       createdAt: new Date().toISOString(),
     };
 
+    // Сохраняем локально
     saveMessage(message);
     setMessages([...messages, message]);
     setMessageText("");
+
+    // Отправляем через WebSocket для real-time доставки
+    sendChatMessage({
+      id: message.id,
+      chatId: message.chatId,
+      userId: message.userId,
+      username: message.username,
+      text: message.text,
+      type: message.type,
+    });
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,10 +303,10 @@ const ChatComponent: React.FC = () => {
     loadMessages(directRoom.id);
   };
 
-  const handleSearchFriend = (query: string) => {
+  const handleSearchFriend = async (query: string) => {
     setNewFriendName(query);
     if (query.trim().length >= 2) {
-      const results = searchUsers(query);
+      const results = await searchUsers(query);
       setSearchResults(results);
       setShowSearchResults(true);
     } else {
@@ -287,6 +349,7 @@ const ChatComponent: React.FC = () => {
       showNotification(`Вы приняли заявку от "${friend.name}"!`, "success");
       // Create direct chat room with new friend
       handleStartChatWithFriend(friend);
+      // Notification is already added in acceptFriendRequest function
     }
   };
 
@@ -427,23 +490,44 @@ const ChatComponent: React.FC = () => {
         {/* Rooms list */}
         <div className={styles.roomsList}>
           {filteredRooms.map((room) => (
-            <button
+            <div
               key={room.id}
-              className={`${styles.roomButton} ${
+              className={`${styles.roomItem} ${
                 selectedRoomId === room.id ? styles.active : ""
               }`}
-              onClick={() => setSelectedRoomId(room.id)}
             >
-              <span className={styles.roomIcon}>
-                {room.icon || (room.type === "channel" ? <Hash size={18} /> : "💬")}
-              </span>
-              <div className={styles.roomInfo}>
-                <div className={styles.roomName}>{room.name}</div>
-                {room.description && (
-                  <div className={styles.roomDescription}>{room.description}</div>
-                )}
-              </div>
-            </button>
+              <button
+                className={styles.roomButton}
+                onClick={() => setSelectedRoomId(room.id)}
+              >
+                <span className={styles.roomIcon}>
+                  {room.icon || (room.type === "channel" ? <Hash size={18} /> : "💬")}
+                </span>
+                <div className={styles.roomInfo}>
+                  <div className={styles.roomName}>{room.name}</div>
+                  {room.description && (
+                    <div className={styles.roomDescription}>{room.description}</div>
+                  )}
+                </div>
+              </button>
+              <button
+                className={styles.deleteRoomButton}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`Удалить чат "${room.name}"? Все сообщения будут удалены.`)) {
+                    deleteChatRoom(room.id);
+                    loadRooms();
+                    if (selectedRoomId === room.id) {
+                      setSelectedRoomId(null);
+                      setMessages([]);
+                    }
+                  }
+                }}
+                title="Удалить чат"
+              >
+                ✕
+              </button>
+            </div>
             ))}
           </div>
           </>
@@ -557,11 +641,25 @@ const ChatComponent: React.FC = () => {
                     </p>
                   </div>
                 ) : (
-                  friends.map((friend) => (
+                  friends.map((friend) => {
+                    // Get avatar from avatarSeed if available, otherwise use friend.avatar or default
+                    const getFriendAvatar = () => {
+                      if (friend.avatarSeed) {
+                        return `https://api.dicebear.com/7.x/avataaars/svg?seed=${friend.avatarSeed}`;
+                      }
+                      if (friend.avatar) {
+                        return friend.avatar;
+                      }
+                      return null;
+                    };
+                    
+                    const avatarUrl = getFriendAvatar();
+                    
+                    return (
                     <div key={friend.id} className={styles.friendItem}>
                       <div className={styles.friendAvatar}>
-                        {friend.avatar ? (
-                          <img src={friend.avatar} alt={friend.name} />
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={friend.name} />
                         ) : (
                           <div className={styles.avatarPlaceholder}>
                             {friend.name[0].toUpperCase()}
@@ -589,7 +687,8 @@ const ChatComponent: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             )}
