@@ -1,9 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import { authService } from "../services/AuthService.js";
+import { emailVerificationService } from "../services/EmailVerificationService.js";
 import type {
   LoginRequestDto,
   RefreshRequestDto,
   RegisterRequestDto,
+  VerifyEmailDto,
+  ResendVerificationCodeDto,
 } from "../dtos/auth.dto.js";
 
 export class AuthController {
@@ -66,9 +69,42 @@ export class AuthController {
       next(err);
     }
   }
+
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const dto = req.body as VerifyEmailDto;
+      const result = await emailVerificationService.verifyEmail(dto.email, dto.code);
+      
+      if (!result.success) {
+        res.status(400).json({ error: { message: result.message } });
+        return;
+      }
+
+      res.json({ message: result.message });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async resendVerificationCode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const dto = req.body as ResendVerificationCodeDto;
+      const result = await emailVerificationService.sendVerificationCode(dto.email);
+      
+      if (!result.success) {
+        res.status(400).json({ error: { message: result.message } });
+        return;
+      }
+
+      res.json({ message: result.message });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const authController = new AuthController();
+
 
 
 

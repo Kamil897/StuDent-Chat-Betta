@@ -60,8 +60,6 @@ export class UserRepository {
       });
       
       return users as any;
-      
-      return users as any;
     } catch (error: any) {
       console.error("[UserRepository] Search error:", error);
       // Возвращаем пустой массив при ошибке вместо выбрасывания исключения

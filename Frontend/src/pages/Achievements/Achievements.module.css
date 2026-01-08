@@ -117,6 +117,13 @@
    font-size: 13px;
    color: #666;
  }
+
+ .unlockedDate {
+   margin-top: 6px;
+   font-size: 11px;
+   color: #999;
+   font-style: italic;
+ }
  
  /* ===== Points ===== */
  .points {

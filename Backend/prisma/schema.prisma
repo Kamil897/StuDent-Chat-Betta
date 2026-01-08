@@ -15,6 +15,9 @@ model User {
   name        String
   surname     String?
   avatarSeed  String?
+  emailVerified Boolean     @default(false)
+  emailVerificationCode String?
+  emailVerificationCodeExpires DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 

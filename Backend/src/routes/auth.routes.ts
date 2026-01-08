@@ -26,5 +26,14 @@ authRouter.get("/me", authMiddleware, (req, res, next) =>
   authController.me(req, res, next),
 );
 
+authRouter.post("/verify-email", (req, res, next) =>
+  authController.verifyEmail(req, res, next),
+);
+
+authRouter.post("/resend-verification-code", (req, res, next) =>
+  authController.resendVerificationCode(req, res, next),
+);
+
+
 
 

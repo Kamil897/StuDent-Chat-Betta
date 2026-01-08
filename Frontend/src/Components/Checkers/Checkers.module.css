@@ -1,0 +1,200 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin: 0 0 20px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.info {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.timer,
+.moves,
+.currentPlayer {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  font-weight: 600;
+}
+
+.red {
+  color: #ff4444;
+  font-weight: 700;
+  background: rgba(255, 68, 68, 0.2);
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.black {
+  color: #000;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.board {
+  display: inline-block;
+  border: 4px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  background: #8b4513;
+}
+
+.row {
+  display: flex;
+}
+
+.square {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.square.light {
+  background: #f0d9b5;
+}
+
+.square.dark {
+  background: #b58863;
+}
+
+.square:hover {
+  background: rgba(245, 87, 108, 0.5) !important;
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.square.selected {
+  background: rgba(245, 87, 108, 0.8) !important;
+  box-shadow: inset 0 0 0 3px #f5576c;
+}
+
+.piece {
+  font-size: 2.5rem;
+  user-select: none;
+  transition: transform 0.2s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.square:hover .piece {
+  transform: scale(1.2);
+}
+
+.redPiece {
+  filter: drop-shadow(0 2px 4px rgba(255, 68, 68, 0.5));
+}
+
+.blackPiece {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.gameOver {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.gameOver h2 {
+  margin: 0 0 20px 0;
+  color: #f5576c;
+}
+
+.gameOver button {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.gameOver button:hover {
+  transform: scale(1.05);
+}
+
+.controls {
+  margin-top: 30px;
+}
+
+.resetBtn {
+  padding: 12px 30px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.resetBtn:hover {
+  background: white;
+  color: #f5576c;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .square {
+    width: 45px;
+    height: 45px;
+  }
+
+  .piece {
+    font-size: 1.8rem;
+  }
+
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .info {
+    gap: 10px;
+  }
+
+  .timer,
+  .moves,
+  .currentPlayer {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+  }
+}

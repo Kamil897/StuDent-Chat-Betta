@@ -54,6 +54,11 @@ export default function Login() {
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("isAuth", "true");
+        
+        // Если email не подтвержден, показываем предупреждение
+        if (!data.user.emailVerified) {
+          alert("Ваш email не подтвержден. Некоторые функции могут быть недоступны. Проверьте почту для подтверждения.");
+        }
       }
 
       navigate("/profile");

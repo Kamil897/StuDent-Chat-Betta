@@ -153,14 +153,21 @@ export function recordLotteryPurchase(): void {
 }
 
 /**
+ * Get all available game IDs
+ */
+export function getAllGameIds(): string[] {
+  return ['Asteroid', 'Pingpong', 'TicTacToe', 'MineSweeper', 'ArenaShooter', 'TeleportingCubeGame', 'Tir', 'Snake', 'Chess', 'Checkers'];
+}
+
+/**
  * Lottery system - randomly unlock a game
  */
 export function lotteryUnlockGame(): { success: boolean; gameId?: string; message: string } {
-  const locked = getLockedGames();
   const unlocked = getUnlockedGames();
+  const allGames = getAllGameIds();
   
-  // Filter out already unlocked games
-  const availableToUnlock = locked.filter(id => !unlocked.includes(id));
+  // Filter out already unlocked games - get all games that are still locked
+  const availableToUnlock = allGames.filter(id => !unlocked.includes(id));
   
   if (availableToUnlock.length === 0) {
     return {
@@ -180,10 +187,24 @@ export function lotteryUnlockGame(): { success: boolean; gameId?: string; messag
     // Record purchase time
     recordLotteryPurchase();
     
+    // Get game display name
+    const gameNames: Record<string, string> = {
+      'Asteroid': 'Asteroid',
+      'Pingpong': 'Ping-Pong',
+      'TicTacToe': 'TicTacToe',
+      'MineSweeper': 'Minesweeper',
+      'ArenaShooter': 'Arena Shooter',
+      'TeleportingCubeGame': 'Teleporting Cube',
+      'Tir': 'Tir',
+      'Snake': 'Snake',
+      'Chess': 'Chess',
+      'Checkers': 'Checkers',
+    };
+    
     return {
       success: true,
       gameId,
-      message: `🎉 Поздравляем! Игра "${gameId}" разблокирована!`
+      message: `🎉 Поздравляем! Игра "${gameNames[gameId] || gameId}" разблокирована!`
     };
   }
   
@@ -206,6 +227,8 @@ export function getGameUnlockPrice(gameId: string): number {
     'TeleportingCubeGame': 60,
     'Tir': 40,
     'Snake': 45,
+    'Chess': 80,
+    'Checkers': 70,
   };
   
   return prices[gameId] || 50;

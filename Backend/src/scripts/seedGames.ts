@@ -38,3 +38,4 @@ seedGames()
     await prisma.$disconnect();
   });
 
+

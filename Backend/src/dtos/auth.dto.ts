@@ -28,13 +28,24 @@ export interface AuthUserDto {
   email: string;
   username: string;
   avatarSeed?: string | null;
+  emailVerified: boolean;
   roles: string[];
+}
+
+export interface VerifyEmailDto {
+  email: string;
+  code: string;
+}
+
+export interface ResendVerificationCodeDto {
+  email: string;
 }
 
 export interface AuthResponseDto {
   user: AuthUserDto;
   tokens: AuthTokensDto;
 }
+
 
 
 

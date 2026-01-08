@@ -18,10 +18,14 @@ setupMatchmakingSocket(io);
 // Настраиваем WebSocket для лидерборда
 setupLeaderboardSocket(io);
 
-server.listen(env.port, () => {
+server.listen(env.port, async () => {
   // eslint-disable-next-line no-console
   console.log(`🚀 Backend listening on http://localhost:${env.port}`);
   console.log(`📡 WebSocket server ready for real-time chat, matchmaking, and leaderboard`);
+  
+  // Verify email service connection
+  const { emailService } = await import("./services/EmailService.js");
+  await emailService.verifyConnection();
 });
 
 

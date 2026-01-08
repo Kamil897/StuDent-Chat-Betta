@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Shop from "../Shop/Shop";
 import s from "./Magaz.module.scss";
-import { Link } from "react-router-dom";
 import { getPoints, spendPoints, addPoints } from "../../utils/points";
 import { 
   isGameUnlocked, 
@@ -10,6 +9,7 @@ import {
   getGameUnlockPrice, 
   lotteryUnlockGame,
   getLockedGames,
+  getUnlockedGames,
   getLotteryPrice,
   canPurchaseLotteryToday,
   getTimeUntilLotteryPurchase
@@ -26,6 +26,7 @@ import {
   SUBSCRIPTION_PLANS,
   hasActiveSubscription,
   processPayment,
+  activateSubscription,
   type SubscriptionPlan
 } from "../../utils/payment";
 
@@ -64,7 +65,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: 3,
     name: "100 баллов (Ежедневно)",
     description: "Бесплатные 100 баллов раз в сутки",
-    image: "/images/points.png",
+    image: "/points.jpg",
     price: 0,
     rarity: "common",
     type: "points",
@@ -74,7 +75,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: 4,
     name: "500 баллов (Еженедельно)",
     description: "Бесплатные 500 баллов раз в неделю",
-    image: "/images/points.png",
+    image: "/points.jpg",
     price: 0,
     rarity: "rare",
     type: "points",
@@ -85,7 +86,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: 5,
     name: "Лотерея игр",
     description: "Случайная разблокировка игры (раз в сутки)",
-    image: "/images/lottery.png",
+    image: "/lottery.jpg",
     price: 75, // Will be updated dynamically
     rarity: "legendary",
     type: "lottery",
@@ -137,7 +138,11 @@ const Magaz: React.FC = () => {
 
   // Generate game unlock products
   useEffect(() => {
-    const locked = getLockedGames();
+    const unlocked = getUnlockedGames();
+    const allGames = ['Asteroid', 'Pingpong', 'TicTacToe', 'MineSweeper', 'ArenaShooter', 'TeleportingCubeGame', 'Tir', 'Snake', 'Chess', 'Checkers'];
+    // Get only locked games
+    const locked = allGames.filter(gameId => !unlocked.includes(gameId));
+    
     // Генерируем уникальный ID на основе хеша всей строки gameId
     const hashString = (str: string): number => {
       let hash = 0;
@@ -149,11 +154,24 @@ const Magaz: React.FC = () => {
       return Math.abs(hash);
     };
     
+    const gameNames: Record<string, string> = {
+      'Asteroid': 'Asteroid',
+      'Pingpong': 'Ping-Pong',
+      'TicTacToe': 'TicTacToe',
+      'MineSweeper': 'Minesweeper',
+      'ArenaShooter': 'Arena Shooter',
+      'TeleportingCubeGame': 'Teleporting Cube',
+      'Tir': 'Tir',
+      'Snake': 'Snake',
+      'Chess': 'Chess',
+      'Checkers': 'Checkers',
+    };
+    
     const gameUnlockProducts: Product[] = locked.map((gameId, index) => ({
       id: 1000 + (hashString(gameId) % 9000) + index, // Уникальный ID на основе хеша и индекса
-      name: `Разблокировать ${gameId}`,
-      description: `Откройте доступ к игре ${gameId}`,
-      image: "/images/game.png",
+      name: `Разблокировать ${gameNames[gameId] || gameId}`,
+      description: `Откройте доступ к игре ${gameNames[gameId] || gameId}`,
+      image: "/game.png",
       price: getGameUnlockPrice(gameId),
       rarity: gameId.includes("Arena") ? "legendary" : gameId.includes("Mine") ? "rare" : "common",
       type: "game" as ProductType,
@@ -179,7 +197,7 @@ const Magaz: React.FC = () => {
       id: 2000 + (hashString(plan.id) % 9000) + index, // Уникальный ID на основе хеша и индекса
       name: plan.name,
       description: plan.description,
-      image: plan.type === "cognia" ? "/images/cognia.png" : "/images/trai.png",
+      image: plan.type === "cognia" ? "/cognia.jpg" : "/Trai.jpg",
       price: plan.price,
       currency: plan.currency,
       rarity: "legendary",
@@ -303,16 +321,23 @@ const Magaz: React.FC = () => {
           
           // Add notification
           import("../../utils/notifications").then(({ notifyPurchase }) => {
-            notifyPurchase(product.name || product.gameId, "game");
+            notifyPurchase(product.name ?? product.gameId ?? "Unknown", "game");
           });
 
           // Пытаемся уведомить backend об успешной разблокировке (необязательно)
-          fetch(`${API_BASE_URL}/games/${encodeURIComponent(product.gameId)}/unlock`, {
-            method: "POST",
-            credentials: "include",
-          }).catch(() => {
-            // если backend недоступен или нет авторизации — просто игнорируем
-          });
+          const token = localStorage.getItem("accessToken");
+          if (token) {
+            fetch(`${API_BASE_URL}/games/${encodeURIComponent(product.gameId)}/unlock`, {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${token}`,
+              },
+              credentials: "include",
+            }).catch((err) => {
+              // если backend недоступен или нет авторизации — просто игнорируем
+              console.debug("[Magaz] Failed to notify backend about game unlock:", err);
+            });
+          }
         }
       }
       return;
@@ -340,8 +365,6 @@ const Magaz: React.FC = () => {
       });
     }
   };
-
-  const affordableCount = products.filter((p) => points >= p.price).length;
 
   // Update lottery product with current price and info
   const updatedProducts = products.map(p => {
@@ -416,30 +439,30 @@ const Magaz: React.FC = () => {
       )}
 
       <header className={s.header}>
-        <h1>{t("shop.title")}</h1>
-        <p>{t("shop.available", { count: affordableCount, total: products.length })}</p>
+        <h1>{t("Магазин")}</h1>
+        {/* <p>{t("shop.available", { count: affordableCount, total: products.length })}</p> */}
 
-        <div className={s.balance}>
-          {t("shop.balance")}: {points}
-        </div>
+        {/* <div className={s.balance}>
+          {t("")}: {points}
+        </div> */}
 
-        <Link to="/Shop">
+        {/* <Link to="/Shop">
           <button className={s.Pointsbtn}>{t("shop.buypoints")}</button>
-        </Link>
+        </Link> */}
       </header>
 
       <div className={s.controls}>
         <input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={t("shop.searchPlaceholder")}
+          placeholder={t("Поиск")}
         />
 
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="name">{t("shop.sortName")}</option>
-          <option value="price-low">{t("shop.sortLow")}</option>
-          <option value="price-high">{t("shop.sortHigh")}</option>
-          <option value="rarity">{t("shop.sortRarity")}</option>
+          <option value="name">{t("Категория")}</option>
+          <option value="price-low">{t("Подписка")}</option>
+          <option value="price-high">{t("Лотерия")}</option>
+          <option value="rarity">{t("Разблокировка игр")}</option>
         </select>
       </div>
 
@@ -569,6 +592,9 @@ const Magaz: React.FC = () => {
                   setPaymentProcessing(false);
                   
                   if (result.success) {
+                    // Активируем подписку локально
+                    activateSubscription(selectedPlan.id);
+                    
                     // Активируем подписку на backend (если пользователь авторизован)
                     const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
                     if (token) {
@@ -607,6 +633,9 @@ const Magaz: React.FC = () => {
                   setPaymentProcessing(false);
                   
                   if (result.success) {
+                    // Активируем подписку локально
+                    activateSubscription(selectedPlan.id);
+                    
                     // Активируем подписку на backend (если пользователь авторизован)
                     const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
                     if (token) {
@@ -647,8 +676,8 @@ const Magaz: React.FC = () => {
 
       {purchased.length > 0 && (
         <div className={s.statistics}>
-          <p>{t("shop.statsPurchased")}: {purchased.length}</p>
-          <p>{t("shop.statsSpent")}: {totalSpent}</p>
+          <p>{t("Купленно")}: {purchased.length}</p>
+          <p>{t("Потраченно")}: {totalSpent}</p>
         </div>
       )}
     </div>

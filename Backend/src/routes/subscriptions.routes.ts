@@ -14,3 +14,4 @@ subscriptionsRouter.post("/activate", authMiddleware, (req, res, next) =>
 
 
 
+

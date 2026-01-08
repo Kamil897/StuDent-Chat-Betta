@@ -1,43 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./Achievements.module.css";
+import { getAllAchievements, type Achievement } from "../../utils/achievements";
 
 type FilterType = "all" | "earned" | "points";
-
-const achievementsData = [
-  {
-    id: 1,
-    titleKey: "achievements.items.firstStep.title",
-    descriptionKey: "achievements.items.firstStep.description",
-    points: 10,
-    earned: true,
-    icon: "🚀",
-  },
-  {
-    id: 2,
-    titleKey: "achievements.items.persistence.title",
-    descriptionKey: "achievements.items.persistence.description",
-    points: 25,
-    earned: true,
-    icon: "🔥",
-  },
-  {
-    id: 3,
-    titleKey: "achievements.items.pro.title",
-    descriptionKey: "achievements.items.pro.description",
-    points: 50,
-    earned: false,
-    icon: "🏆",
-  },
-];
 
 const Achievements = () => {
   const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
 
-  const filteredAchievements = achievementsData.filter((a) => {
-    if (activeFilter === "earned") return a.earned;
-    if (activeFilter === "points") return a.points >= 25;
+  useEffect(() => {
+    const loadAchievements = () => {
+      const allAchievements = getAllAchievements();
+      setAchievements(allAchievements);
+    };
+
+    loadAchievements();
+    
+    // Listen for achievement unlocks
+    const handleAchievementUnlock = () => {
+      loadAchievements();
+    };
+    
+    window.addEventListener("achievement-unlocked", handleAchievementUnlock);
+    window.addEventListener("game-win", handleAchievementUnlock);
+    
+    return () => {
+      window.removeEventListener("achievement-unlocked", handleAchievementUnlock);
+      window.removeEventListener("game-win", handleAchievementUnlock);
+    };
+  }, []);
+
+  const filteredAchievements = achievements.filter((a) => {
+    if (activeFilter === "earned") return a.unlockedAt !== undefined;
+    if (activeFilter === "points") {
+      // Filter by high-value achievements (50+ points equivalent)
+      const highValueIds = ["50_games_won", "100_games_won", "250_games_won", "500_games_won"];
+      return highValueIds.includes(a.id);
+    }
     return true;
   });
 
@@ -73,21 +74,32 @@ const Achievements = () => {
 
       {/* Achievements */}
       <div className={styles.grid}>
-        {filteredAchievements.map((a) => (
-          <div
-            key={a.id}
-            className={`${styles.card} ${!a.earned ? styles.locked : ""}`}
-          >
-            <div className={styles.icon}>{a.icon}</div>
-
-            <div className={styles.info}>
-              <h3>{t(a.titleKey)}</h3>
-              <p>{t(a.descriptionKey)}</p>
-            </div>
-
-            <div className={styles.points}>+{a.points}</div>
+        {filteredAchievements.length === 0 ? (
+          <div className={styles.empty}>
+            <p>Нет достижений для отображения</p>
           </div>
-        ))}
+        ) : (
+          filteredAchievements.map((a) => (
+            <div
+              key={a.id}
+              className={`${styles.card} ${!a.unlockedAt ? styles.locked : ""}`}
+            >
+              <div className={styles.icon}>{a.icon}</div>
+
+              <div className={styles.info}>
+                <h3>{a.name}</h3>
+                <p>{a.description}</p>
+                {a.unlockedAt && (
+                  <p className={styles.unlockedDate}>
+                    Получено: {new Date(a.unlockedAt).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+
+              <div className={styles.points}>+5</div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

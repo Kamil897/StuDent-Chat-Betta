@@ -23,6 +23,7 @@ export class AuthService {
     email: string;
     username: string;
     avatarSeed: string | null;
+    emailVerified: boolean;
     roles: { roleId: number }[];
   }, roleNames: string[]): AuthUserDto {
     return {
@@ -32,6 +33,7 @@ export class AuthService {
       email: user.email,
       username: user.username,
       avatarSeed: user.avatarSeed,
+      emailVerified: user.emailVerified,
       roles: roleNames,
     };
   }
@@ -62,6 +64,7 @@ export class AuthService {
       name: data.name,
       surname: data.surname ?? null,
       avatarSeed: null,
+      // emailVerified имеет default(false) в схеме, не нужно передавать явно
     });
 
     const userRole = await roleRepository.ensureRole("user");
@@ -96,6 +99,13 @@ export class AuthService {
     });
 
     const authUser = this.mapUserToAuthDto(fullUser, roleNames);
+
+    // Send verification code after registration (async, don't wait for it)
+    const { emailVerificationService } = await import("./EmailVerificationService.js");
+    emailVerificationService.sendVerificationCode(data.email).catch((err) => {
+      console.error("[AuthService] Failed to send verification code:", err);
+      // Don't fail registration if email sending fails
+    });
 
     return {
       user: authUser,

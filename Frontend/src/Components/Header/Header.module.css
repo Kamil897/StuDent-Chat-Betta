@@ -151,36 +151,6 @@
     font-weight: 700;
   }
 
-  .pointsDisplay {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-  }
-
-  .pointsDisplay:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-  }
-
-  .pointsIcon {
-    font-size: 18px;
-    line-height: 1;
-  }
-
-  .pointsAmount {
-    font-size: 16px;
-    font-weight: 700;
-  }
-
   /* Language */
 .langWrapper {
   position: relative;
@@ -225,5 +195,5 @@
 
 .activeLang {
   background: #000;
-  color: rgb(112, 112, 112);
+  color: #fff;
 }

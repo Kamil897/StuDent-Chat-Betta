@@ -5,6 +5,11 @@ export type NewsItem = {
   title: string;
   text: string;
   category: Category;
+  author?: string;
+  publishedAt?: string;
+  imageUrl?: string;
+  views?: number;
+  featured?: boolean;
 };
 
 export const news: NewsItem[] = [

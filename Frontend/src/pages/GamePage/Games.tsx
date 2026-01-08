@@ -38,21 +38,69 @@ const Games: React.FC = () => {
   useEffect(() => {
     const lockedGames = localStorage.getItem("locked_games");
     if (!lockedGames) {
-      // Set some games as locked by default
-      setLockedGames(['ArenaShooter', 'MineSweeper', 'TeleportingCubeGame']);
+      // Set games as locked by default (all except first 2-3 games)
+      const allGameIds = ['Asteroid', 'Pingpong', 'TicTacToe', 'MineSweeper', 'ArenaShooter', 'TeleportingCubeGame', 'Tir', 'Snake', 'Chess', 'Checkers'];
+      // First 2 games are free, rest are locked
+      const defaultLocked = allGameIds.slice(2);
+      setLockedGames(defaultLocked);
     }
   }, []);
 
-  const gameCards: GameCard[] = [
-    { id: 'Asteroid', title: 'asteroid', route: '/games/meteors', locked: !isGameUnlocked('Asteroid') },
-    { id: 'Pingpong', title: 'ping-pong', route: '/games/pingpong', locked: !isGameUnlocked('Pingpong') },
-    { id: 'TicTacToe', title: 'TicTacToe', route: '/games/don', locked: !isGameUnlocked('TicTacToe') },
-    { id: 'MineSweeper', title: 'mineswepeer', route: '/games/minesweeper', locked: !isGameUnlocked('MineSweeper') },
-    { id: 'ArenaShooter', title: 'arena', route: '/games/arenashooter', locked: !isGameUnlocked('ArenaShooter') },
-    { id: 'TeleportingCubeGame', title: 'Cube', route: '/games/TeleportingCubeGame', locked: !isGameUnlocked('TeleportingCubeGame') },
-    { id: 'Tir', title: 'Tir', route: '/games/Tir', locked: !isGameUnlocked('Tir') },
-    { id: 'Snake', title: 'Snake', route: '/games/Snake', locked: !isGameUnlocked('Snake') },
-  ];
+  const [gameCards, setGameCards] = useState<GameCard[]>([]);
+
+  // Update game cards when unlock status changes
+  useEffect(() => {
+    const updateGameCards = () => {
+      const cards: GameCard[] = [
+        { id: 'Asteroid', title: 'Asteroid', route: '/games/meteors', locked: !isGameUnlocked('Asteroid') },
+        { id: 'Pingpong', title: 'Ping-Pong', route: '/games/pingpong', locked: !isGameUnlocked('Pingpong') },
+        { id: 'TicTacToe', title: 'TicTacToe', route: '/games/don', locked: !isGameUnlocked('TicTacToe') },
+        { id: 'MineSweeper', title: 'Minesweeper', route: '/games/minesweeper', locked: !isGameUnlocked('MineSweeper') },
+        { id: 'ArenaShooter', title: 'Arena Shooter', route: '/games/ArenaShooter', locked: !isGameUnlocked('ArenaShooter') },
+        { id: 'TeleportingCubeGame', title: 'Teleporting Cube', route: '/games/TeleportingCubeGame', locked: !isGameUnlocked('TeleportingCubeGame') },
+        { id: 'Tir', title: 'Tir', route: '/games/Tir', locked: !isGameUnlocked('Tir') },
+        { id: 'Snake', title: 'Snake', route: '/games/Snake', locked: !isGameUnlocked('Snake') },
+        { id: 'Chess', title: 'Chess', route: '/games/Chess', locked: !isGameUnlocked('Chess') },
+        { id: 'Checkers', title: 'Checkers', route: '/games/Checkers', locked: !isGameUnlocked('Checkers') },
+      ];
+      setGameCards(cards);
+    };
+
+    updateGameCards();
+
+    // Listen for game unlock events
+    const handleGameUnlock = () => {
+      updateGameCards();
+    };
+
+    window.addEventListener('game-unlocked', handleGameUnlock);
+    window.addEventListener('storage', handleGameUnlock);
+
+    return () => {
+      window.removeEventListener('game-unlocked', handleGameUnlock);
+      window.removeEventListener('storage', handleGameUnlock);
+    };
+  }, []);
+
+  // Update game cards when stats change
+  useEffect(() => {
+    const updateGameCards = () => {
+      const cards: GameCard[] = [
+        { id: 'Asteroid', title: 'Asteroid', route: '/games/meteors', locked: !isGameUnlocked('Asteroid') },
+        { id: 'Pingpong', title: 'Ping-Pong', route: '/games/pingpong', locked: !isGameUnlocked('Pingpong') },
+        { id: 'TicTacToe', title: 'TicTacToe', route: '/games/don', locked: !isGameUnlocked('TicTacToe') },
+        { id: 'MineSweeper', title: 'Minesweeper', route: '/games/minesweeper', locked: !isGameUnlocked('MineSweeper') },
+        { id: 'ArenaShooter', title: 'Arena Shooter', route: '/games/ArenaShooter', locked: !isGameUnlocked('ArenaShooter') },
+        { id: 'TeleportingCubeGame', title: 'Teleporting Cube', route: '/games/TeleportingCubeGame', locked: !isGameUnlocked('TeleportingCubeGame') },
+        { id: 'Tir', title: 'Tir', route: '/games/Tir', locked: !isGameUnlocked('Tir') },
+        { id: 'Snake', title: 'Snake', route: '/games/Snake', locked: !isGameUnlocked('Snake') },
+        { id: 'Chess', title: 'Chess', route: '/games/Chess', locked: !isGameUnlocked('Chess') },
+        { id: 'Checkers', title: 'Checkers', route: '/games/Checkers', locked: !isGameUnlocked('Checkers') },
+      ];
+      setGameCards(cards);
+    };
+    updateGameCards();
+  }, [stats]);
 
   // Calculate progress based on games played (game wins)
   const totalGamesPlayed = stats.gameWins;

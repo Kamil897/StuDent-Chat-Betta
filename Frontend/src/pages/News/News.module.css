@@ -26,3 +26,19 @@
 .line {
   border-bottom: 1px solid #D9D9D96E;
 }
+
+.featuredSection {
+  grid-column: 1 / -1;
+  margin-bottom: 40px;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+}
+
+.featuredTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: white;
+}

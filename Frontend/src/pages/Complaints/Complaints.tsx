@@ -24,7 +24,11 @@ const Complaints: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   const getAuthToken = (): string | null => {
-    return localStorage.getItem("accessToken") || localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
+    if (!token) {
+      console.warn("[Complaints] No access token found in localStorage");
+    }
+    return token;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,6 +38,19 @@ const Complaints: React.FC = () => {
     if (!token) {
       setMessage({ text: "Требуется авторизация", type: "error" });
       return;
+    }
+
+    // Проверка верификации email
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      if (!user.emailVerified) {
+        setMessage({ 
+          text: "Для отправки жалоб необходимо подтвердить email. Проверьте почту и подтвердите email.", 
+          type: "error" 
+        });
+        return;
+      }
     }
 
     if (!formData.reason.trim()) {
@@ -47,19 +64,52 @@ const Complaints: React.FC = () => {
     try {
       // Если тип жалобы - пользователь, ищем пользователя по нику
       let targetUserId = formData.targetUserId;
-      if (formData.targetType === "user" && targetUsername && !targetUserId) {
-        const searchResponse = await fetch(`${API_BASE_URL}/users/search?q=${encodeURIComponent(targetUsername)}&limit=1`, {
+      if (formData.targetType === "user") {
+        if (!targetUsername.trim()) {
+          setMessage({ text: "Укажите никнейм пользователя", type: "error" });
+          setSubmitting(false);
+          return;
+        }
+
+        // Ищем пользователя по нику
+        const searchResponse = await fetch(`${API_BASE_URL}/users/search?q=${encodeURIComponent(targetUsername.trim())}&limit=1`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
           credentials: "include",
         });
         
-        if (searchResponse.ok) {
-          const searchData = await searchResponse.json();
-          if (searchData.users && searchData.users.length > 0) {
-            targetUserId = searchData.users[0].id;
-          }
+        if (!searchResponse.ok) {
+          throw new Error("Ошибка при поиске пользователя");
+        }
+
+        const searchData = await searchResponse.json();
+        if (!searchData.users || searchData.users.length === 0) {
+          setMessage({ text: "Пользователь не найден. Проверьте правильность никнейма", type: "error" });
+          setSubmitting(false);
+          return;
+        }
+
+        targetUserId = searchData.users[0].id;
+        
+        if (!targetUserId) {
+          setMessage({ text: "Не удалось получить ID пользователя", type: "error" });
+          setSubmitting(false);
+          return;
         }
       }
 
+      // Проверяем обязательные поля в зависимости от типа
+      if (formData.targetType === "message" || formData.targetType === "post") {
+        if (!formData.targetContentId || !formData.targetContentId.trim()) {
+          setMessage({ text: `Укажите ID ${formData.targetType === "message" ? "сообщения" : "поста"}`, type: "error" });
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      console.log("[Complaints] Submitting complaint with token:", token ? "Token present" : "No token");
+      
       const response = await fetch(`${API_BASE_URL}/complaints`, {
         method: "POST",
         headers: {
@@ -69,27 +119,56 @@ const Complaints: React.FC = () => {
         credentials: "include",
         body: JSON.stringify({
           targetType: formData.targetType,
-          targetUserId: targetUserId || undefined,
-          targetContentId: formData.targetContentId || undefined,
-          reason: formData.reason,
-          comment: formData.comment || undefined,
+          targetUserId: formData.targetType === "user" ? targetUserId : undefined,
+          targetContentId: (formData.targetType === "message" || formData.targetType === "post") 
+            ? formData.targetContentId?.trim() 
+            : undefined,
+          reason: formData.reason.trim(),
+          comment: formData.comment?.trim() || undefined,
         }),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || "Ошибка при отправке жалобы");
+        const errorData = await response.json().catch(() => ({ error: { message: "Неизвестная ошибка" } }));
+        const errorMessage = errorData.error?.message || errorData.message || "Ошибка при отправке жалобы";
+        
+        console.error("[Complaints] Error response:", response.status, errorData);
+        
+        // Обработка специфичных ошибок
+        if (response.status === 401) {
+          // Проверяем, есть ли токен
+          if (!token) {
+            throw new Error("Требуется авторизация. Пожалуйста, войдите в систему");
+          } else {
+            // Токен есть, но неверный или истек - нужно обновить
+            throw new Error("Сессия истекла. Пожалуйста, войдите в систему снова");
+          }
+        } else if (response.status === 429) {
+          throw new Error("Превышен лимит жалоб. Попробуйте позже");
+        } else if (response.status === 400) {
+          throw new Error(errorMessage);
+        } else {
+          throw new Error(errorMessage);
+        }
       }
 
+      const result = await response.json();
+      
       setMessage({ text: "Жалоба успешно отправлена", type: "success" });
       setFormData({
         targetType: "user",
         reason: "",
         comment: "",
+        targetUserId: undefined,
+        targetContentId: undefined,
       });
       setTargetUsername("");
     } catch (error: any) {
-      setMessage({ text: error.message || "Ошибка при отправке жалобы", type: "error" });
+      console.error("Complaint submission error:", error);
+      setMessage({ 
+        text: error.message || "Ошибка при отправке жалобы. Проверьте подключение к серверу", 
+        type: "error" 
+      });
     } finally {
       setSubmitting(false);
     }
@@ -195,5 +274,6 @@ const Complaints: React.FC = () => {
 };
 
 export default Complaints;
+
 
 

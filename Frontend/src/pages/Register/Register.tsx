@@ -1,12 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import S from "./Register.module.css";
+import EmailVerification from "../EmailVerification/EmailVerification";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 export default function Register() {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -24,56 +31,118 @@ export default function Register() {
   };
 
   const handleRegister = async () => {
-    if (!isChecked) return;
+    if (!isChecked) {
+      setError("Необходимо согласиться с политикой конфиденциальности");
+      return;
+    }
 
-    // 🎲 РАНДОМНЫЙ seed для аватара (1 раз при регистрации)
-    const avatarSeed = crypto.randomUUID();
-    // Use email as stable ID, fallback to username
-    const userId = formData.email 
-      ? `user_${formData.email.replace(/[^a-zA-Z0-9]/g, '_')}`
-      : formData.username
-      ? `user_${formData.username.replace(/[^a-zA-Z0-9]/g, '_')}`
-      : `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // Валидация
+    if (!formData.name.trim() || !formData.email.trim() || !formData.username.trim() || !formData.password.trim()) {
+      setError("Заполните все обязательные поля");
+      return;
+    }
 
-    const user = {
-      ...formData,
-      id: userId,
-      avatarSeed,
-    };
+    if (formData.password.length < 6) {
+      setError("Пароль должен содержать минимум 6 символов");
+      return;
+    }
 
-    // сохраняем пользователя
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("isAuth", "true");
-    
-    // Добавляем пользователя в лидерборд (или обновляем существующего)
-    const { getOrCreateLeaderboardUser, removeDuplicates } = await import("../../utils/leaderboard");
-    getOrCreateLeaderboardUser(
-      userId,
-      formData.username,
-      `${formData.name} ${formData.surname}`.trim(),
-      formData.email,
-      avatarSeed
-    );
-    // Remove any duplicates
-    removeDuplicates();
+    setLoading(true);
+    setError("");
 
-    // очистка формы
-    setFormData({
-      name: "",
-      surname: "",
-      email: "",
-      username: "",
-      password: "",
-    });
+    try {
+      // Отправляем запрос на backend
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          surname: formData.surname.trim() || undefined,
+          email: formData.email.trim(),
+          username: formData.username.trim(),
+          password: formData.password,
+        }),
+      });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "Ошибка при регистрации");
+      }
+
+      const data = await response.json();
+      console.log("[Register] Registration successful, received data:", {
+        hasTokens: !!data.tokens,
+        hasAccessToken: !!data.tokens?.accessToken,
+        hasUser: !!data.user,
+        userEmailVerified: data.user?.emailVerified,
+      });
+
+      // Сохраняем токены и пользователя
+      if (data.tokens?.accessToken) {
+        localStorage.setItem("accessToken", data.tokens.accessToken);
+        console.log("[Register] Access token saved");
+      } else {
+        console.warn("[Register] No access token in response");
+      }
+      if (data.tokens?.refreshToken) {
+        localStorage.setItem("refreshToken", data.tokens.refreshToken);
+      }
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("isAuth", "true");
+        console.log("[Register] User data saved, emailVerified:", data.user.emailVerified);
+      }
+
+      // Добавляем пользователя в лидерборд
+      const { getOrCreateLeaderboardUser, removeDuplicates } = await import("../../utils/leaderboard");
+      getOrCreateLeaderboardUser(
+        data.user.id,
+        data.user.username,
+        `${data.user.name} ${data.user.surname || ""}`.trim(),
+        data.user.email,
+        data.user.avatarSeed
+      );
+      removeDuplicates();
+
+      // Показываем форму верификации
+      setRegisteredEmail(formData.email.trim());
+      setShowVerification(true);
+    } catch (err: any) {
+      console.error("Registration error:", err);
+      setError(err.message || "Ошибка при регистрации. Проверьте подключение к серверу");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerified = () => {
+    // Обновляем пользователя в localStorage
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      user.emailVerified = true;
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+
+    // Переходим в профиль
     navigate("/profile");
   };
+
+  // Если показываем верификацию, рендерим её
+  if (showVerification) {
+    return <EmailVerification email={registeredEmail} onVerified={handleVerified} />;
+  }
 
   return (
     <div className={S.wrapper}>
       <div className={S.left}>
         <div className={S.card}>
           <h1>Добро пожаловать!</h1>
+
+          {error && <p className={S.error}>{error}</p>}
 
           <label>
             Имя
@@ -150,10 +219,10 @@ export default function Register() {
 
           <button
             className={S.regBtn}
-            disabled={!isChecked}
+            disabled={!isChecked || loading}
             onClick={handleRegister}
           >
-            Зарегистрироваться
+            {loading ? "Регистрация..." : "Зарегистрироваться"}
           </button>
 
           <p className={S.loginText}>

@@ -1,520 +1,438 @@
-// Variables
-$primary: #000;
-$secondary: #666;
-$accent: #f0f0f0;
-$success: #22c55e;
-$error: #ef4444;
-$border: #e5e5e5;
-$white: #fff;
-$radius: 8px;
-$shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-$transition: all 0.2s ease;
+/* ===============================
+   COLOR SYSTEM
+================================ */
+:root {
+  --bg-main: #020617;
+  --bg-card: #020b1e;
+  --border: #1e293b;
 
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+
+  --success: #22c55e;
+  --danger: #dc2626;
+  --warning: #f59e0b;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===============================
+   CONTAINER
+================================ */
 .container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 1rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: $primary;
-  line-height: 1.5;
+  padding: 32px 24px;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
 }
 
-// Notification
-.notification {
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
-  padding: 1rem 1.5rem;
-  border-radius: $radius;
-  font-weight: 500;
-  z-index: 1000;
-  animation: slideIn 0.3s ease;
-  
-  &.success {
-    background: $success;
-    color: $white;
-  }
-  
-  &.error {
-    background: $error;
-    color: $white;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-// Header
+/* ===============================
+   HEADER
+================================ */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid $border;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-}
+  align-items: center;
+  margin-bottom: 28px;
 
-.titleSection {
-  .title {
-    font-size: 2.5rem;
-    font-weight: 300;
-    margin: 0 0 0.5rem 0;
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
-  
-  .subtitle {
-    color: $secondary;
-    font-size: 0.95rem;
-    margin: 0;
-  }
 }
 
-.userInfo {
-  display: flex;
-  gap: 2rem;
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    justify-content: space-between;
-  }
-}
-
-.pointsbtn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #368cd8, #034085);
-  color: white;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  transition-duration: 0.5s;
-  transition-property: all;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.pointsbtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-  background: linear-gradient(135deg, #013d8b, #3c6a92);
-}
-
-.pointsbtn:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-
-.balance, .purchaseInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  
-  @media (max-width: 768px) {
-    align-items: flex-start;
-  }
-}
-
-.balanceLabel, .purchaseLabel {
-  color: $secondary;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.25rem;
-}
-
-.balanceAmount, .purchaseAmount {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-// Controls
+/* ===============================
+   CONTROLS
+================================ */
 .controls {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-}
+  gap: 12px;
+  margin-bottom: 28px;
 
-.searchSection {
-  .searchInput {
-    width: 100%;
-    max-width: 400px;
-    padding: 0.75rem 1rem;
-    border: 1px solid $border;
-    border-radius: $radius;
-    font-size: 0.95rem;
-    transition: $transition;
-    
+  input,
+  select {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+
     &:focus {
       outline: none;
-      border-color: $primary;
-    }
-    
-    &::placeholder {
-      color: $secondary;
+      border-color: var(--accent);
     }
   }
 }
 
-.filtersSection {
+/* ===============================
+   GRID
+================================ */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* ===============================
+   CARD BASE
+================================ */
+.productWrapper {
+  position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 2rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1.5rem;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 10px 24px rgba(0,0,0,.25);
+
+  transition: transform .25s ease, box-shadow .25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 18px 40px rgba(0,0,0,.35);
+
+    .hoverPreview {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-.filterGroup {
+/* ===============================
+   PRODUCT TYPES (VISUAL SPLIT)
+================================ */
+.subscription {
+  border-color: rgba(99,102,241,.5);
+  box-shadow: 0 0 0 1px rgba(99,102,241,.15);
+}
+
+.oneTime {
+  border-color: rgba(34,197,94,.35);
+}
+
+.lottery {
+  border-color: rgba(245,158,11,.45);
+}
+
+/* ===============================
+   IMAGE
+================================ */
+.productWrapper img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: #020617;
+}
+
+/* ===============================
+   HOVER PREVIEW
+================================ */
+.hoverPreview {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(2,6,23,.92)
+  );
+  opacity: 0;
+  transform: translateY(10px);
+  transition: .25s ease;
+
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ===============================
+   CONTENT
+================================ */
+.productContent {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 10px;
   flex: 1;
 }
 
-.filterLabel, .sortLabel {
-  display: block;
-  color: $secondary;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
+.productTitle {
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.filters {
+.productDescription {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.productFooter {
+  margin-top: auto;
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  
-  button {
-    padding: 0.5rem 1rem;
-    border: 1px solid $border;
-    background: $white;
-    color: $secondary;
-    border-radius: $radius;
-    cursor: pointer;
-    transition: $transition;
-    font-size: 0.9rem;
-    
-    &:hover {
-      border-color: $primary;
-      color: $primary;
-    }
-    
-    &.active {
-      background: $primary;
-      color: $white;
-      border-color: $primary;
-    }
-  }
+  flex-direction: column;
+  gap: 10px;
 }
 
-.sortGroup {
-  .sortSelect {
-    padding: 0.5rem 1rem;
-    border: 1px solid $border;
-    border-radius: $radius;
-    background: $white;
-    cursor: pointer;
-    transition: $transition;
-    
-    &:focus {
-      outline: none;
-      border-color: $primary;
-    }
-  }
+.productPrice {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--success);
 }
 
-// Product Grid
-.productGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-}
-
-.productWrapper {
-  position: relative;
-}
-
-.rarityBadge {
-  position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  background: $primary;
-  color: $white;
-  padding: 0.25rem 0.75rem;
-  border-radius: $radius;
-  font-size: 0.75rem;
-  font-weight: 500;
-  z-index: 10;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-// Empty State
-.emptyState {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 4rem 2rem;
-  color: $secondary;
-  
-  .emptyIcon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-  
-  .emptyTitle {
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin: 0 0 0.5rem 0;
-  }
-  
-  .emptyDescription {
-    margin: 0 0 1.5rem 0;
-  }
-  
-  .clearSearch {
-    padding: 0.75rem 1.5rem;
-    background: $primary;
-    color: $white;
-    border: none;
-    border-radius: $radius;
-    cursor: pointer;
-    transition: $transition;
-    
-    &:hover {
-      opacity: 0.9;
-    }
-  }
-}
-
-.Pointsbtn {
-  background-color: #ffffff; // белая кнопка
-  color: #1e2f3f; // тёмно-синий текст, чтобы сочеталось с фоном
+/* ===============================
+   BUTTON RESET
+================================ */
+button {
   border: none;
-  border-radius: 8px; // скруглённые углы
-  padding: 16px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    background-color: #f0f4f8; // лёгкий серый при наведении
-    transform: translateY(-2px); // небольшой подъём
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  &:active {
-    transform: translateY(0); // возвращается при клике
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+  background: none;
+  font-family: inherit;
 }
 
+/* ===============================
+   MAIN BUTTON
+================================ */
+.buyButton {
+  height: 44px;
+  width: 100%;
+  border-radius: 12px;
 
-// Statistics
-.statistics {
-  background: $accent;
-  border-radius: $radius;
-  padding: 2rem;
-  margin-top: 3rem;
-  
-  .statsTitle {
-    font-size: 1.25rem;
-    font-weight: 400;
-    margin: 0 0 1.5rem 0;
-    text-align: center;
-  }
-  
-  .statsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 2rem;
-    
-    .statItem {
-      text-align: center;
-      
-      .statValue {
-        display: block;
-        font-size: 2rem;
-        font-weight: 300;
-        margin-bottom: 0.25rem;
-      }
-      
-      .statLabel {
-        color: $secondary;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-    }
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-  
-  .titleSection .title {
-    font-size: 2rem;
-  }
-  
-  .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-  }
-  
-  .notification {
-    top: 1rem;
-    right: 1rem;
-    left: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .productGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .userInfo {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .balance, .purchaseInfo {
-    align-items: flex-start;
-  }
-}
-
-// Payment Modal
-.paymentModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  padding: 1rem;
+  gap: 8px;
+
+  background: linear-gradient(
+    180deg,
+    var(--accent),
+    var(--accent-hover)
+  );
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.1) inset,
+    0 8px 20px rgba(79,70,229,.35);
+
+  transition: .2s ease;
+
+  &:hover:not(:disabled) {
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.2) inset,
+      0 12px 28px rgba(79,70,229,.55);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    background: #1e293b;
+    color: #64748b;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+/* ===============================
+   BOUGHT / ACTIVE STATE
+================================ */
+.bought {
+  background: linear-gradient(180deg, #16a34a, #15803d) !important;
+  cursor: default;
+
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+/* ===============================
+   LOADING STATE
+================================ */
+.loading {
+  pointer-events: none;
+  opacity: .85;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===============================
+   POINTS BUTTON
+================================ */
+.Pointsbtn {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+
+  background: var(--success);
+  color: #020617;
+  font-weight: 700;
+  font-size: 13px;
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.25) inset,
+    0 6px 16px rgba(22,163,74,.35);
+}
+
+/* ===============================
+   NOTIFICATION
+================================ */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  z-index: 1000;
+
+  &.success { background: var(--success); }
+  &.error { background: var(--danger); }
+}
+
+/* ===============================
+   MODAL
+================================ */
+.paymentModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .paymentModalContent {
-  background: $white;
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 500px;
+  max-width: 480px;
   width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  
-  h2 {
-    margin: 0 0 1.5rem 0;
-    font-size: 1.75rem;
-    font-weight: 600;
-  }
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid var(--border);
 }
 
 .closeButton {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   border: none;
-  font-size: 2rem;
+  background: transparent;
+  color: var(--text-muted);
   cursor: pointer;
-  color: $secondary;
+  font-size: 24px;
   line-height: 1;
-  padding: 0;
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: $transition;
-  
+  transition: all 0.2s ease;
+
   &:hover {
-    color: $primary;
+    background: var(--bg-main);
+    color: var(--text-main);
   }
 }
 
 .planInfo {
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
   
   h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--text-main);
   }
   
   p {
-    color: $secondary;
-    margin: 0 0 1rem 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0 0 16px 0;
+    line-height: 1.5;
   }
   
   .price {
-    font-size: 2rem;
+    font-size: 28px;
     font-weight: 700;
-    color: $primary;
-    margin: 1rem 0;
+    color: var(--success);
+    margin: 16px 0;
   }
-}
-
-.features {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0;
   
-  li {
-    padding: 0.5rem 0;
-    color: $secondary;
+  .features {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+    
+    li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border);
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
   }
 }
 
 .paymentMethods {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .paymentButton {
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: $white;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 12px;
   border: none;
-  border-radius: $radius;
-  font-size: 1rem;
+  background: linear-gradient(180deg, var(--accent), var(--accent-hover));
+  color: white;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: $transition;
+  transition: all 0.2s ease;
   
   &:hover:not(:disabled) {
+    box-shadow: 0 8px 20px rgba(79,70,229,.35);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
   }
   
   &:disabled {
@@ -524,23 +442,125 @@ $transition: all 0.2s ease;
 }
 
 .paymentNote {
-  font-size: 0.85rem;
-  color: $secondary;
+  font-size: 12px;
+  color: var(--text-muted);
   text-align: center;
-  margin: 1rem 0 0 0;
+  margin-top: 16px;
   font-style: italic;
 }
 
-@media (max-width: 768px) {
-  .paymentModalContent {
-    padding: 1.5rem;
-  }
+.statistics {
+  margin-top: 32px;
+  padding: 20px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  display: flex;
+  gap: 24px;
+  justify-content: center;
   
-  .paymentModalContent h2 {
-    font-size: 1.5rem;
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    
+    strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
   }
-  
-  .planInfo .price {
-    font-size: 1.5rem;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+@media (max-width: 640px) {
+  .controls {
+    flex-direction: column;
   }
+
+  .header h1 {
+    font-size: 22px;
+  }
+}
+/* ===============================
+   GLASS / NEON CARD
+================================ */
+.glass {
+  background: rgba(2,6,23,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 20px rgba(79,70,229,0.25),
+    0 0 10px rgba(99,102,241,0.3);
+  transition: transform .25s ease, box-shadow .25s ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 12px 36px rgba(79,70,229,0.5),
+      0 0 16px rgba(99,102,241,0.5);
+  }
+}
+
+/* ===============================
+   BADGE
+================================ */
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(99,102,241,0.85);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.4);
+}
+
+/* Цвета по типу продукта */
+.subscription .badge { background: rgba(99,102,241,0.85); }
+.game .badge { background: rgba(34,197,94,0.85); }
+.lottery .badge { background: rgba(245,158,11,0.85); }
+.points .badge { background: rgba(59,130,246,0.85); }
+
+/* ===============================
+   BUY BUTTON STATES
+================================ */
+.buyButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &.loading {
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  &.bought {
+    background: linear-gradient(180deg, #16a34a, #15803d) !important;
+    cursor: default;
+    &:hover {
+      box-shadow: none;
+    }
+  }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

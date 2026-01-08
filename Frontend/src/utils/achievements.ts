@@ -9,9 +9,17 @@ export type AchievementId =
   | "pingpong_master"
   | "tictactoe_master"
   | "minesweeper_master"
+  | "snake_master"
+  | "tir_master"
+  | "arena_master"
+  | "cube_master"
+  | "chess_master"
+  | "checkers_master"
   | "10_games_won"
   | "50_games_won"
-  | "100_games_won";
+  | "100_games_won"
+  | "250_games_won"
+  | "500_games_won";
 
 export interface Achievement {
   id: AchievementId;
@@ -76,6 +84,54 @@ const ALL_ACHIEVEMENTS: Record<AchievementId, Omit<Achievement, "unlockedAt">> =
     description: "Выиграйте 100 игр",
     icon: "🏆",
   },
+  "250_games_won": {
+    id: "250_games_won",
+    name: "Двести пятьдесят побед",
+    description: "Выиграйте 250 игр",
+    icon: "👑",
+  },
+  "500_games_won": {
+    id: "500_games_won",
+    name: "Пятьсот побед",
+    description: "Выиграйте 500 игр",
+    icon: "💎",
+  },
+  snake_master: {
+    id: "snake_master",
+    name: "Мастер Змейки",
+    description: "Выиграйте 5 раз в Snake",
+    icon: "🐍",
+  },
+  tir_master: {
+    id: "tir_master",
+    name: "Мастер Тира",
+    description: "Выиграйте 5 раз в Tir",
+    icon: "🎯",
+  },
+  arena_master: {
+    id: "arena_master",
+    name: "Мастер Арены",
+    description: "Выиграйте 5 раз в Arena Shooter",
+    icon: "🔫",
+  },
+  cube_master: {
+    id: "cube_master",
+    name: "Мастер Куба",
+    description: "Выиграйте 5 раз в Teleporting Cube",
+    icon: "🎲",
+  },
+  chess_master: {
+    id: "chess_master",
+    name: "Мастер Шахмат",
+    description: "Выиграйте 5 раз в Chess",
+    icon: "♟️",
+  },
+  checkers_master: {
+    id: "checkers_master",
+    name: "Мастер Шашек",
+    description: "Выиграйте 5 раз в Checkers",
+    icon: "⚫",
+  },
 };
 
 /**
@@ -134,9 +190,12 @@ export function unlockAchievement(id: AchievementId): boolean {
     // Dispatch custom event for UI updates
     window.dispatchEvent(new CustomEvent("achievement-unlocked", { detail: { id, achievement } }));
     
-    // Add notification
-    const { notifyAchievement } = await import("./notifications");
-    notifyAchievement(achievement.name, achievement.description);
+    // Add notification (async import without blocking)
+    import("./notifications").then(({ notifyAchievement }) => {
+      notifyAchievement(achievement.name, achievement.description);
+    }).catch((error) => {
+      console.error("Error loading notifications module:", error);
+    });
 
     return true;
   } catch (error) {
@@ -183,7 +242,8 @@ export function checkGameAchievements(gameName: string, totalWins: number) {
   } else if (
     gameName.toLowerCase().includes("tic") ||
     gameName.toLowerCase().includes("tac") ||
-    gameName.toLowerCase().includes("don")
+    gameName.toLowerCase().includes("don") ||
+    gameName.toLowerCase().includes("rock paper")
   ) {
     const gameWins = getGameWins("tictactoe");
     if (gameWins >= 5) {
@@ -197,6 +257,36 @@ export function checkGameAchievements(gameName: string, totalWins: number) {
     if (gameWins >= 5) {
       unlockAchievement("minesweeper_master");
     }
+  } else if (gameName.toLowerCase().includes("snake")) {
+    const gameWins = getGameWins("snake");
+    if (gameWins >= 5) {
+      unlockAchievement("snake_master");
+    }
+  } else if (gameName.toLowerCase().includes("tir")) {
+    const gameWins = getGameWins("tir");
+    if (gameWins >= 5) {
+      unlockAchievement("tir_master");
+    }
+  } else if (gameName.toLowerCase().includes("arena")) {
+    const gameWins = getGameWins("arena");
+    if (gameWins >= 5) {
+      unlockAchievement("arena_master");
+    }
+  } else if (gameName.toLowerCase().includes("cube") || gameName.toLowerCase().includes("teleporting")) {
+    const gameWins = getGameWins("cube");
+    if (gameWins >= 5) {
+      unlockAchievement("cube_master");
+    }
+  } else if (gameName.toLowerCase().includes("chess")) {
+    const gameWins = getGameWins("chess");
+    if (gameWins >= 5) {
+      unlockAchievement("chess_master");
+    }
+  } else if (gameName.toLowerCase().includes("checker")) {
+    const gameWins = getGameWins("checkers");
+    if (gameWins >= 5) {
+      unlockAchievement("checkers_master");
+    }
   }
 
   // Total wins achievements
@@ -206,6 +296,10 @@ export function checkGameAchievements(gameName: string, totalWins: number) {
     unlockAchievement("50_games_won");
   } else if (totalWins === 100) {
     unlockAchievement("100_games_won");
+  } else if (totalWins === 250) {
+    unlockAchievement("250_games_won");
+  } else if (totalWins === 500) {
+    unlockAchievement("500_games_won");
   }
 }
 

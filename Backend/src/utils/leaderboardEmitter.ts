@@ -8,3 +8,4 @@ export function notifyLeaderboardUpdate() {
   leaderboardEmitter.emit("leaderboard_updated");
 }
 
+
